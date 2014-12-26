@@ -1,2 +1,39 @@
 \section{Related Work}
 
+\subsection{Previous work by the NDN team}
+
+Within the participatory sensing application area of the previous NDN
+FIA project, we extended the concept of a host-centric ``personal data
+vault'' developed at UCLA and USC~\cite{mun2010personal} to create a
+geographically distributed \emph{personal data cloud (PDC)} using NDN.
+This prototype went through three iterations reflecting increasing
+understanding of how to develop applications using NDN.   The first
+version implemented data collections, key management, storage, data
+transfer and authentication/setup phases in a way largely analogous to
+TCP/IP based applications.  A second revision integrated the PDC
+architecture into a deployed participatory sensing application at the
+Center for Embedded Networked Sensing, called
+Ohmage~\cite{ramanathan2012ohmage}.
+%% It included the development of
+%mappings between the relational data store used for Ohmage and the PDC
+%data collection model. 
+The most recent revision transitioned to use the
+new Sync primitive for transferring content between entities, and removes
+much of the session-like semantics initially
+present\footnote{https://github.com/remap/PDC-SYNC}. This experience
+will inform work with the Open mHealth team as they continue to develop
+pilot applications using Ohmage and similar platforms. With the emergence
+of the Sync primitive and our recently developed
+ChronoSync synchronization library~\cite{Afanasyev13:CHRONOSYNC}, as well as lighter-weight mobile client
+options based on NDN.JS~\cite{ndn-js-NOMEN}, we plan to explore end-to-end applications data dissemination via NDN.
+
+
+\subsection{Suggested reading}
+
+Estrin, Deborah, and Ida Sim. "Open mHealth architecture: an engine for health care innovation." Science 330.6005 (2010): 759-760.
+
+Diabetes Case Study document from openmhealth.org 
+
+Hicks, John, et al. ohmage: An open mobile system for activity and experience sampling. CENS Technical Reports 100: 1–25, 2010.
+
+Kang, J., Shilton, K., Estrin, D., Burke, J., Hansen, M. "Self-surveillance privacy." Iowa L. Rev. 97 (2011): 809.

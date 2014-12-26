@@ -1,5 +1,5 @@
 # change this to the file name of the paper 
-PRJ = ndn-netenv-ebams
+PRJ = ndn-netenv-Mobile_Multimedia
 
 DVIOPT = -P cmz -t letter -G0
 

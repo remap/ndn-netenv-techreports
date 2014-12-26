@@ -1,2 +1,89 @@
 \section{Introduction}
 
+As part of the NSF-supported NDN ``Next Phase'' research from 2014-2016, 
+the NDN project team has selected two network environments, {\bf Open mHealth} and {\bf
+Enterprise Building Automation \& Management}, and one application
+cluster, {\bf Mobile Multimedia}, to drive our research, verify the
+architecture design, and ground evaluation of the next phase of our project.
+The two environments represent critical areas in the design space for
+next-generation Health IT and Cyberphysical Systems, respectively.  They
+also extend work started in the previous NDN FIA project on participatory
+sensing and instrumented environments to focus on specific application
+ecosystems where we believe NDN can address fundamental challenges that
+are unmet by IP.  Based on the successful initial results of previous
+NDN research, we have identified Mobile  Multimedia as an application
+area of cross-cutting relevance, motivated not only by the
+network environments above but our team's desire to further develop
+NDN by using it for our everyday communication.
+
+This technical report provides background information on the {\bf Mobile Multimedia}
+application cluster, including key application challenges faced using
+IP and describes the design for pilot applications that the NDN team is 
+building.  
+
+\subsection{Background: N-way Media Streaming \& File Sharing}
+We will continue to explore peer-to-peer videoconferencing as an application
+that drives low-latency communication and scalability, aiming to deliver
+a usable application for the project team via the emerging WebRTC support
+in modern browsers, e.g., Chrome or Firefox.   We will change only the
+rendezvous and transport, and take advantage of echo cancellation,
+bandwidth adaptivity (which may require different measurements for NDN),
+automatic gain control, noise reduction and suppression, etc.  This work
+will incorporate our previous video streaming application~\cite{videoTR}, 
+multi-user chat~\cite{ChronosTR},  and audio conferencing~\cite{act-sec} work introduced in the previous section.  
+We will focus on mobile deployments given rapid development in this area 
+(Mozilla, AT\&T and Ericsson recently demonstrated WebRTC-based calls
+via Firefox on a mobile
+device.\footnote{\url{http://www.ericsson.com/thecompany/press/releases/2013/02/1680640}}).
+We will also extend and apply ChronoShare, our NDN-based Dropbox-style
+application (first developed as a project in PI L. Zhang's seminar class) that 
+supports file sharing among a group of potentially mobile users in a 
+completely distributed fashion (i.e., without a centralized
+server in the cloud).  These applications have provided an opportunity to explore 
+both the new NDN Sync primitive (for efficient namespace reconciliation 
+across multiple nodes) provided in the CCNx platform. The resulting image and video libraries will be applicable to ``imager-as-sensor'' applications in mobile health and surveillance in building management applications. 
+
+%as well as an alternative
+%implementation, Chronos, developed by Zhang's group.
+
+\subsection{Background: Networked 3D environments} 
+Networked 3D environments represent a crucial building block of simulations,
+visualizations, games, and educational experiences.  We plan to extend
+preliminary work in supporting multi-player online games with NDN~\cite{GamingTR}
+to peer-to-peer Massively Multiplayer Online Games (MMOGs), which require
+high interactive responsiveness, availability, and security,
+as well as state consistency across distributed nodes~\cite{schiele2007requirements}. 
+These requirements call for
+robust application architectures and efficient synchronization mechanisms. 
+Consider the basic scenario of a player traveling through
+virtual space, encountering objects instantiated by remote peers.
+The application must efficiently discover these objects with progressive, 
+prioritized download and synchronization with views of peers nearby in the
+virtual space. Many IP-based peer-to-peer MMOG frameworks
+use DHT-based overlays to implement application-level multicast between
+nearby players~\cite{carter2012survey}.  NDN's intrinsic multicast support 
+and name-based routing can improve performance and simplify application 
+development, e.g., names can encode (virtual) locality information through techniques 
+such as locality-sensitive hashes~\cite{datar2004locality} or hierarchical spatial
+%such as quad-/oct-trees
+representations~\cite{samet1984quadtree}. Results for this application can likely be applied in other location-based applications; for example, nearest neighbor (k-NN) queries in ``virtual space'' are a key part of other mobility applications, such as vehicle-to-vehicle communications, described below.  Further, we plan to explore the use of these techniques to provide interactive visualization of building management data shared over NDN in our first network environment. 
+%(Octree-based naming was explored for vehicular applications by MIT CSAIL in \cite{kumar2012carspeak}.)  
+
+\subsection{Background: Vehicular Applications} 
+
+As a special case of mobility and intermittent environments, vehicular applications offer a great context for experimenting with network support for information maximization and other mechanisms for prioritizing data transfer.  
+%Our agenda for vehicular applications 
+We will explore the exchange of both sensor data and media in support of collision avoidance, traffic monitoring, and location-based notifications~\cite{karagiannis2011vehicular}.  Though their communication is resource-constrained, co-located devices collect largely redundant data, as they often share (and sense) the same environment.  Opportunities for information transfer are limited between different clusters of devices, such as cars moving in opposite directions or meeting at intersections. A network utility maximization problem can define utility as a function of delivered information rather than transmitted flow rate; redundant information from different sources would have a lower utility than non-redundant information from the same source. The solution to this information maximization problem will exploit network parameters such as forwarding and cache replacement policy. Our goal is to demonstrate that generic solutions are possible that operate based solely on (similarity) relations among content names, without any semantic interpretation of names or any application-specific knowledge. 
+To experiment with vehicular applications, we shall exploit an existing
+collaboration with UIUC facilities and services (F\&S) department, which owns
+100 vehicles available for research instrumentation as part of
+on an ongoing NSF-funded CRI project (CNS-1059294).
+
+\subsection{Collaboration}
+
+\subsection{Proposed Milestones 2014-2016}
+\begin{itemize}
+\item
+\end{itemize}
+
+

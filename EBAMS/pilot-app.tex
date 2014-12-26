@@ -1,2 +1,40 @@
 \section{Pilot Application}
 
+\todo{Description of pilot application}
+
+\subsection{Research Objectives} 
+
+{\bf Naming and application design.} The NDN architecture can reflect application knowledge (and needs) directly. Application logic for accessing devices can be captured in naming patterns and cryptographic signatures directly supported by the network. To support BA system integration, we aim to lower the cognitive distance between network protocol details and application requirements, so that complex BAS applications are easier to write, debug, and maintain. For example, an NDN-based BAS would use hierarchical naming rather than addresses and port numbers, removing the need for middleware to translate.  We will have to develop
+consistent, granular, application-specific naming of data sources and control points, to
+support changing topologies and device configurations.  NDN-network-based BAS could also 
+make routing or forwarding decisions based on application-level semantics, 
+essentially impossible in IP networks.
+
+{\bf Trust and security.} The trust model for this environment will emerge from the administrative organization of the enterprise and functional relationships among components.  We believe these relationships can be expressed in the data and control namespaces, allowing straightforward trust verification in the applications.  Extending our prior work in authenticated control, we plan to develop a system security approach that secures the data directly – through cryptographic signatures on data packets and optional encryption of content. As a result, anyone equipped with the right credential (in the trust framework) can securely access, configure, and/or control  devices using the same data name from any location in the enterprise. NDN-capable devices can then communicate on the network with authenticated messages, rather than relying on connection-level or physical segregation, or authentication present for user interface only.
+
+{\bf Embedded and real-time support.}  To examine how NDN will work at all layers of BAS and BMS, we must consider embedded and real-time systems, many of which have recently transitioned to IP-based communication.  Embedded platform support through both gateways and lightweight stacks for low-capability devices, including ''hard'' real-time communication when appropriate support exists at lower 
+layers~\cite{loeser2004low, skeie2006timeliness}.
+
+\subsection{Application Requirements}
+
+%% Time-series
+%%
+
+%% Database queries
+
+Naming and application design
+\begin{itemize}
+\item Reflect system and physical world knowledge in the naming 
+\item Simplify application development (seeking evaluation approaches)
+\end{itemize}
+
+Trust and security
+\begin{itemize}
+\item Base on real administrative organization at UCLA
+\item Trust model? Hierarchical may work but may be in a different namespace from the data  (see Wentao’s work so far) 
+\end{itemize}
+
+Storage in the network
+\begin{itemize}
+\item Support the basic reporting requirements of the campus operators
+\end{itemize}
