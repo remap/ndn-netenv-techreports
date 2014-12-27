@@ -30,7 +30,7 @@ building.  It serves as the primary design document for this application.
 %\epsfig{file=figures/OpenmHealth-figure.eps,width=.48\textwidth}
 \includegraphics[width=.6\textwidth]{figures/BAS-Figure}
 \vskip -5pt
-\caption{{\em \small Example of building automation and management components, including sensors, controllers, and interfaces to both the public Internet and an enterprise intranet.  Securely integrating these heterogeneous components, while simplifying application development, is an important challenge posed by this network environment.}}
+\caption{{Example of building automation and management components, including sensors, controllers, and interfaces to both the public Internet and an enterprise intranet.  Securely integrating these heterogeneous components, while simplifying application development, is an important challenge posed by this network environment.}}
 \label{fig:BAS}
 \end{wrapfigure}
 %\end{center}
@@ -68,6 +68,39 @@ of our built environment.
 \subsection{Relationship to NDN-IoT}
 
 The EBAMS research has much in common with the ``Internet of Things'' (IoT) vision and related NDN research.  For now, we consider IoT applications separately (and not in this document), motivated from consumer experience and smart home deployments.  That research focuses on a bottom-up approach to networking devices using NDN, including issues such as NDN support on resource-constrained devices, bootstrapping and name assignment.  The EBAMS network environment focuses on enterprise-scale networking of industrial control and monitoring technologies. 
+
+Figure~\ref{fig:apogee-levels} shows the ``levels'' of an industry-standard Siemens Apogee system.  Our NP research focuses on the ``management'' and ``automation'' levels, while the IoT work has more in common with the ``field'' level .
+
+\begin{figure*}
+\begin{center}
+\vskip -12pt
+%\epsfig{file=figures/OpenmHealth-figure.eps,width=.48\textwidth}
+\includegraphics[width=.6\textwidth]{figures/siemens-apogee-levels}
+\vskip -5pt
+\caption{{Levels in a Siemens Apogee system. The EBAMS network environment focuses on the ``management'' and ``automation'' levels.}}
+\label{fig:apogee-levels}
+\end{center}
+\end{figure*}
+
+\subsection{Challenges of IP}
+
+\begin{itemize}
+\item \textbf{Addressing spread across many layers} (e.g., VLAN, host IP, port, device number, etc.) that over-emphasizes gateways over actual sensors/actuators.  
+\item Legacy protocols \textbf{rely on logical / physical isolation} of control and monitoring networks from IT systems. Use of IP protocol provides many new integration possibilities but new security risks;  \textbf{traditional perimeter and channel-based security insufficient}. 
+\item Many devices don’t have user interfaces. \textbf{Discovery and bootstrapping} still relies on DHCP, TFTP, etc. or manual configuration. 
+\item Middleware has been proprietary and often heavyweight.  To get data-centric communication, often building on SOAP/HTTP, etc. 
+\item COAP also proposes a request-response model but still the \textbf{channel-based security} of DTLS as the primary approach, with IPSec as an alternative.    Multicast support is limited across all of these options. 
+\end{itemize}
+
+\subsection{Benefits of NDN}
+
+\begin{itemize}
+\item Massive \textbf{addressing simplification}, with a potential for huge impact when scaled to the enterprise. Simpler network infrastructure needed to deploy complex monitoring and automation. 
+\item New ways of working with edge resources that \textbf{de-emphasize gateway addressing} while preserving support for topological heterogeneity. 
+\item Lighter-weight, \textbf{data-centric security} options easier to develop, with data verification intrinsically part of the architecture. 
+\item \textbf{Caching and storage integration} may provide significant advantages in distributed storage at all levels of the architecture, increasing \item data availability without power increase. 
+\item Intrinsic multicast; \textbf{many-to-many communication easier to deploy}. 
+\end{itemize}
 
 \subsection{Collaboration}
 

@@ -2,7 +2,49 @@
 
 Develop repository design and basic trust approach for offline report generation and online real-time viewing of the data as typically used by Fac Mgmt. 
 
+\paragraph{Challenges}
+\begin{itemize}
+\item Namespace design to tackle overlapping roles of names in application data access, routing, device deployment, security, etc. 
+\item Storage/repository design that provides familiar query interfaces.
+\item Discovery and bootstrapping that is easier and more secure than IP. 
+\item Trust model development and implementation (a good problem to have). 
+\item Efficient crypto performance and group / multi-cast cryptographic challenges. 
+\item Low-frequency, high-importance notifications (alarms).
+\end{itemize}
+
+\paragraph{Approach.}
+
+\begin{itemize}
+\item A hierarchical namespace for sensor data, devices, and users that embodies intrinsic relationships in BMS applications and can be used directly for data delivery;
+\item Bootstrapping and ongoing management of device configuration that is simpler, more scalable and more robust than IP solutions;
+\item Per-packet signatures, applied immediately after data acquisition, that enable  straightforward verification of data authenticity and provenance;
+\item Strong security through cryptographic signing to verify data authenticity and provenance;
+\item Encryption-based access control to sensor data, with data encrypted immediately after its acquisition, rather than relying on encrypted channels; 
+\item Strong privacy through encryption-based access control to protect sensing data, without reliance on physical/logical network isolation.
+\item Identity-based authentication using NDN's (still developing) security primitives; 
+\item Scalable user and privilege management to support enterprise-wide deployments. 
+\end{itemize}
+
+
+\subsection{NDN-EBAMS   Application Architecture} 
+ 
+ Cite Wentao's paper for full information on design
+ 
+ 
+ 
+ 
 \subsection{Naming}
+Discover
+Design focuses on the actual deployment
+Data sources \& sinks:  sensors, actuators.
+Physical space / location will be involved in trust and should be described consistently and considered along with routing / application implications.
 \subsection{Storage}
 Repository requirements
-\subsection{Trust}
+\subsection{Trust and security}
+Crypto approach.
+Groups: NDN-BmS developers at UCLA, UIUC, departmental/campus stakeholders, and testbed users. 
+Users:  Users possessing a cert in new system, and anonymous users on the web.
+Applications that are not associated with a real-world users but need credentials: aggregators, gateways, background processes, etc. 
+
+\subsection{Communication}
+Alarms
