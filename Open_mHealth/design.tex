@@ -90,6 +90,63 @@ Presentation (REMAP)
 Security (Michigan)
 
 
+\subsubsection{Mobile application}
+
+Design for Android. Port NFD, tools.
+
+We are going to use the Ohmage Android client (including the Mobility module) with only the in-app storage and communication changed to NDN. 
+See (Tangmunarunkit, H., et al., 2014) and also the papers on the Ohmage website. 
+
+Note that Mobility generates activity classified data that may not require the Activity Classification DPU in the initial version.
+
+Instance of TCP/IP Ohmage (client and server) is now up and running thanks to Haitao in Lixia’s group at UCLA.  
+
+Initial analysis of Ohmage mobile client communication completed by Prof. Euihyun Jung’s group from Anyang Univ.   
+
+From Basel: Today, we had an internal presentation from the Psychology Dept which explained their use of the Ohmage system that is running in Basel. Although NDNex comes too late for being applied in ongoing projects, these projects are a good source of insights about user requirements for our future NDNex system, especially the aspect of data sovereignty.
+
+
+\subsubsection{Data Storage}
+
+Approach:  One or more new NDN repo designs supporting a hierarchy of storage needs: mobile device, user private repository, temporary processing storage.
+
+Requirements: From Open mHealth Data Storage Unit (DSU) Design and overall application architecture.
+
+Storage at:
+\begin{itemize}
+\item The mobile device itself.
+\item A personal data repository (which may be distributed).
+\item Temporary storage for processing and visualization components. 
+\end{itemize}
+
+Current plan:  implement in Java using jNDN, for Android support. 
+
+Design led by Jianxun in Dan Pei’s group at Tsinghua. 
+
+\subsubsection{Processing}
+
+Goal here is to have a few representative components implemented using NFN-style approach, not exactly the processing blocks listed above, necessarily.  
+
+Ideally, provide composable data flow inspired by Google Cloud Dataflow, Apache Spark, etc.  
+
+Start with GeoFencing, as activity classification is currently handled in the Mobility portion of Ohmage.  But, could also consider other application-specific processing ideas. 
+
+\subsubsection{Visualization}
+Start with Ohmage web front end
+And Lifestreams?
+NDN-JS and D3
+Web-based front end using NDN-JS with access to geofenced location information, providing (for example) running trail visualization.
+Perhaps use many GPX format visualizers.  E.g., \url{http://flowingdata.com/2014/02/05/where-people-run/}
+  
+\subsubsection{Location-based Content Emitter}
+Web-based front end using NDN-JS with access to geofenced location information, providing location-specific content back to the mobile user.
+
+Related to vehicular networking work. 
+  
+  
+\subsubsection{Identity Manager}
+  
+  
 \subsection{Trust and security}
 
 Replacing Oauth2 for distributed processing is critical
@@ -115,6 +172,24 @@ Name privacy considerations.
 \subsubsection{Data}
 Personal health data (and metadata) namespace and repository design – focusing on support for physical activity data in the first round.  
 What schema? Initially, try direct mapping of Open mHealth schema to names
+
+
+\textbf{Basis of design}: Open mHealth Physical Activity data schema\footnote{\url{http://www.openmhealth.org/developers/schemas/#physical-activity} and \url{http://bioportal.bioontology.org/ontologies/SNOMEDCT?p=classes&conceptid=68130003}}, as well as other schemas from Open mHealth as needed. 
+
+\input{physical-activity-schema-json}
+
+How to separate this into namespace and data?
+Figure~\ref{fig:ndnex-namespace}
+
+JSON payload. 
+
+\begin{figure}
+\begin{center}
+\includegraphics[width=1\textwidth]{figures/ndnex-name-top-01}
+\caption{NDNEx Namespace, version 1.}
+\label{fig:ndnex-namespace}
+\end{center}
+\end{figure}
 
 \subsubsection{Certificates}
 

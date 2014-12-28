@@ -1,5 +1,6 @@
 # change this to the file name of the paper 
 PRJ = ndn-netenv-ebams
+LATEX_OPT = --shell-escape
 
 DVIOPT = -P cmz -t letter -G0
 
@@ -8,8 +9,8 @@ all : ${PRJ}.pdf
 #${PRJ}.dvi : *.tex *.bib 
 #	latex ${PRJ}; bibtex ${PRJ}; latex ${PRJ}; latex ${PRJ}
 ${PRJ}.pdf : *.tex *.bib 
-	pdflatex ${PRJ} && (ls bu*.aux | xargs -n 1 bibtex) ; bibtex ${PRJ}.aux ; pdflatex ${PRJ} ; pdflatex ${PRJ} 
-
+	pdflatex ${LATEX_OPT} ${PRJ} && (ls bu*.aux | xargs -n 1 bibtex) ; bibtex ${PRJ}.aux ; pdflatex ${LATEX_OPT} ${PRJ} ; pdflatex ${LATEX_OPT} ${PRJ} 
+	
 #${PRJ}.ps : ${PRJ}.dvi
 #	dvips ${DVIOPT} -o ${PRJ}.ps ${PRJ}.dvi
 #

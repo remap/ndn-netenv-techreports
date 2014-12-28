@@ -2,6 +2,20 @@
 
 In this network environment, we focus on consumer-facing applications, as shown in Figure~\ref{fig:continuum}. 
 
+For our use case, focus on a \textbf{simple ecosystem of composable services rather than a single siloed application.}
+
+Our pilot application:  \textbf{NDNEx} (NDN-Exercise) and a user-facing \textbf{Identity Manager}.  Supporting physical activity is both a critical part of building healthy communities and a key retail market. 
+
+Our objective is not only an application.
+
+It is to act as an example of interoperating components of an Open mHealth ecosystem.
+
+This places additional requirements on the design.
+
+See Deborah's TEDMED talk: 
+\url{https://www.youtube.com/watch?feature=player_embedded&v=lAEhSGYEHWU}
+
+
 \begin{figure*}
 \begin{center}
 \includegraphics[width=.8\textwidth]{figures/continuum}
@@ -12,9 +26,6 @@ In this network environment, we focus on consumer-facing applications, as shown 
 \end{center}
 \end{figure*}
 
-For our use case, focus on a \textbf{simple ecosystem of composable services rather than a single siloed application.}
-
-Our pilot applications:  \textbf{NDNEx} (NDN-Exercise) and the required \textbf{Identity Manager}.  Supporting physical activity is both a critical part of building healthy communities and a key retail market. 
 
 NDNEx is a non-proprietary ecosystem for consumer physical activity data. 
 
@@ -56,7 +67,7 @@ REMAPs funded collaborations on Urban Trails and technology for Parks with Calif
 \end{figure}
 
 
-\subsection{Research Requirements} 
+\subsection{Research Objectives} 
 
 {\bf Naming and application design.} The Open mHealth architecture focuses on data exchange rather than system interoperability, which is well-suited for NDN. Using NDN rather than IP enables Open mHealth applications to be coded using data naming directly rather than having to create abstractions to translate data names to IP-based hosts providing services. We will explore how application architecture can be simplified and map closely to network architecture. With its emerging synchronization primitives, NDN will also enhance network support for synchronizing data across multiple devices. 
 
@@ -65,46 +76,37 @@ REMAPs funded collaborations on Urban Trails and technology for Parks with Calif
 {\bf Storage in the network.} NDN naturally supports distributed storage, which can ease the burden of fault-tolerance and load-balancing in large networks, reducing cost-of-entry and fostering innovation. 
 
 
-\subsection{Application Requirements}
-The Open mHealth team envisions that the Internet will interconnect 1)
-data capture, 2) secure storage, 3) modeling and analytics, and 4) user
-interface components to create a modular, layered sense-making framework.  
-%% Repeated from above.
-
-Adaptation of Open mHealth REST-based communication model to a data dissemination approach inspired by NDN.
-
-Naming and application design
-\begin{itemize}
-\item What schema? Initially, try direct mapping of Open mHealth schema
-\item Borrow ideas from Named Function Networking concept for distributed processing
-\item Translate existing REST-based approach or do pure NDN? 
-\end{itemize}
-
-Trust and security
-\begin{itemize}
-\item Replacing Oauth2 for distributed processing is critical
-\item Data encryption requirements
-\item Name privacy issues
-\end{itemize}
-
-Storage in the network
-\begin{itemize}
-\item Interaction of personal and shared stores
-\item Data filtering at the repo?
-\item New legal / economic relationship between the players
-\end{itemize}
-
 \subsection{Existing Building Blocks} 
 
 What we will leverage to build this application.
+
+\paragraph{What to keep from current Open mHealth design.}
+\begin{itemize}
+\item Data-centric rather than service-centric interoperability. $\Rightarrow$ \emph{Focus on data namespace design.}
+\item Distributed architecture of Capture, DSU, DPU, DVU. $\Rightarrow$ \emph{Implement data flow approach in NDN.}
+\item End user focus (not hospitals, doctors, etc.) $\Rightarrow$ \emph{Consumer app deployment scenario.}
+\item User-centric privacy approach. $\Rightarrow$ \emph{Need to inform user of choices, data flow.}
+\item Encrypted communications. $\Rightarrow$ \emph{Encryption-based access control, name encryption.}
+\item Mobile publishing. $\Rightarrow$ \emph{Use as our driver to solve this oft-cited challenge.}
+\end{itemize}
+
+\paragraph{What to discard from current Open mHealth design.}
+\begin{itemize}
+\item REST/HTTP: Move away from RPC call model and carrying state in Interests.
+\item Host-based endpoints for services:  focus on data dissemination model and NFN style processing. 
+\item OAuth: need new identity / authentication support. 
+\item Single storage ``location''. 
+\end{itemize}
+
 
 \subsubsection{Capture: Ohmage \& Mobility}
 
 \url{http://ohmage.org/}
 
-ohmage is an open-source participatory sensing technology platform. It supports expressive project authoring; mobile phone-based data capture through both inquiry-based surveys and automated data capture as well as temporally and/or spatially triggered reminders, data visualization and real-time feedback; privacy respecting data management; and extensible data exploration. All captured data are automatically timestamped, geocoded and uploaded for analysis and visualization. 
+ohmage is an open-source participatory sensing technology platform. It supports: 1) expressive project authoring; 2) mobile phone-based data capture through both inquiry-based surveys and automated data capture as well as temporally and/or spatially triggered reminders, 3) data visualization and real-time feedback; privacy respecting data management; and 4) extensible data exploration. 
 
-Tangmunarunkit, H., et al. "Ohmage: A General and Extensible End-to-End Participatory Sensing Platform. In submission. http://ohmage.org/static/ohmagehome/papers/ohmage.pdf
+Tangmunarunkit, H., et al. "Ohmage: A General and Extensible End-to-End Participatory Sensing Platform,” ACM Trans. on Intelligent Systems and Technology (in submission), UCLA CS Technical Report 140015. (Used in 20 projects.)  \url{http://web.ohmage.org/~hongsudt/pub/ohmage_ucla_140015.pdf}
+
 
 
 \subsubsection{Storage: Open mHealth Data Storage Unit (DSU) Design}
@@ -148,8 +150,56 @@ The web frontend (powered by the ohmage project) is used to provide students sec
 
 \subsubsection{Content push: Trails Database}
 
-\url{http://gizmodo.com/los-angeles-launches-an-interactive-urban-trail-system-1541248828}
+\url{http://archinect.com/news/article/111897927/tour-los-angeles-history-with-ucla-s-new-interactive-urban-trail-app}
 
-The LASHP Trails Mobile Website gives residents and visitors to Northeast Downtown Los Angeles site-specific access to a dynamic combination of historic information and health-related activities along urban trails starting and ending at the Los Angeles State Historic Park. In collaboration with LA City Planning, the students, their parents, teachers, lawmakers, community members, and the California Endowment discussed the possibility of formalizing this trail network. California State Parks and the UCLA Interpretive Media Laboratory (IMLab) were asked to develop a proposal to formalize this trail network through a combination of wayfinding markers and a digital site that would incorporate historical information and images, along with calorie counting and mileage tracking capabilities.
+The LASHP Trails Mobile Website gives residents and visitors to Northeast Downtown Los Angeles site-specific access to a dynamic combination of historic information and health-related activities along urban trails starting and ending at the Los Angeles State Historic Park. 
 
+\subsection{Application Requirements}
 
+Summarize. 
+
+The Open mHealth team envisions that the Internet will interconnect 1)
+data capture, 2) secure storage, 3) modeling and analytics, and 4) user
+interface components to create a modular, layered sense-making framework.  
+%% Repeated from above.
+
+Adaptation of Open mHealth REST-based communication model to a data dissemination approach inspired by NDN.
+
+\subsubsection{Naming} 
+\begin{itemize}
+\item \textbf{Data format namespace design} comes directly from Open mHealth developer documentation. 
+\item \textbf{Application architecture} consistent with the pieces above and from previous participatory sensing projects. (e.g., Mun et al, 2009)
+\item What schema? Initially, try direct mapping of Open mHealth schema
+\item Borrow ideas from Named Function Networking concept for distributed processing
+\item Translate existing REST-based approach or do pure NDN? 
+\item Represent raw time-location data (GPS, accelerometer) from mobiles. 
+\item Support successive rounds of processing that, for example:  
+    \begin{itemize}
+    \item Generate classified activity data that follows the Physical Activity JSON schema and perhaps other related schemas.  (This happens at client-side in Ohmage Mobility but could happen at a DPU.)	
+    \item Identify / segment ``bouts”''of physical activity or exercise. 
+    \item Add features to a bout from DPUs to the existing store. 
+    \end{itemize}
+\item Consumers should be able to access raw and processed data for a certain time period.
+\item Consumers should be able to efficiently read data sequentially. 
+\end{itemize}
+
+\subsubsection{Trust and security}
+\begin{itemize}
+\item \textbf{Identity and trust management} scenario comes from our proposed application use case.  (Recall:  Not just an app, an example of interoperating components in an ecosystem.)
+\item Provide granular access control over various components of the data namespace – in particular, raw location data. 
+\item Replacing Oauth2 for distributed processing is critical
+\item Data encryption requirements
+\item Name privacy issues
+\item Follow passive key publication approach (rather than active) if possible. 
+\end{itemize}
+Can / should we support different identities relative each part of the system: collection, processing, and visualization?
+Collection: User may publish data to serve multiple applications, but doesn’t want them to be able to conspire / correlate that they are the same user.
+Processing:  Design should provide the minimum possible information to the processing components about user identity. 
+Visualization: Visible face of “the app” to the user. 
+
+\subsubsection{Storage in the network}
+\begin{itemize}
+\item Interaction of personal and shared stores
+\item Data filtering at the repo?
+\item New legal / economic relationship between the players
+\end{itemize}
