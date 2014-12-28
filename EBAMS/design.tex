@@ -34,9 +34,16 @@ Cite Wentao's paper for full information on design
 
   
  \subsection{Trust and security}
+ 
+Only focus on read access control. No write access.
+
+Opportunity to compare active services (e.g., broker) with passive. 
+
 \subsubsection{Trust model} 
 Leverage PKI as deployed
 Would like to start from the same tools being used for user/gateway trust management in NDN testbed for this application.  
+How to take advantage of the NDN signing infrastructure?
+Certificates and delegation of authority.
 
 \subsubsection{Identity} 
 
@@ -47,6 +54,23 @@ Crypto approach.
 Groups: NDN-BmS developers at UCLA, UIUC, departmental/campus stakeholders, and testbed users. 
 Users:  Users possessing a cert in new system, and anonymous users on the web.
 Applications that are not associated with a real-world users but need credentials: aggregators, gateways, background processes, etc. 
+
+There appear to be two important factors to
+consider in controlling access to a specific monitoring point or group of
+points in our pilot: 1) what department it relates to (not necessarily in the name),
+2) what type of data it is (probably in the name).
+Each "point" here corresponds to a source of time-series monitoring data.
+For UCLA, I would expect there are O(100) "departments", with many
+individuals having access for several departments, and O(10) types of
+data, for our purposes.
+
+What is the appropriate practical crypto scheme to develop access control
+based on these dimensions?  I really like the concept of ABE, as long as
+there is some ability to deploy it practically, because it would enable us
+to define sensible *named* attributes that correspond directly to
+department and data type. A relationship between attribute names and data
+names (for key data, etc.) might be useful to simplify things at the
+application level.
 
 
 

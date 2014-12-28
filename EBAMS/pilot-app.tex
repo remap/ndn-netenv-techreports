@@ -3,6 +3,17 @@
 
 Our pilot applications:  \textbf{NDN-EBAMS} deployment at UCLA. 
 
+Build an NDN-based collection, storage, and query
+system for real UCLA Facilities Management data coming from the Siemens
+building monitoring system. (Target ~10k points at up to 1Hz in 2016.)  We
+are initially focused on \emph{read-only} access to sensing data.
+
+Scope of the data: the 800 or so points of monitoring that we just got
+access to generate 24M rows per year and cover a few buildings and a few
+data types.  We hope to scale to 10k pts by the end of 2016.  Points are
+monitored no faster than 1 Hz.  We get changes only, so time stamps are
+irregular.
+
 \subsection{Research Objectives} 
 
 {\bf Naming and application design.} The NDN architecture can reflect application knowledge (and needs) directly. Application logic for accessing devices can be captured in naming patterns and cryptographic signatures directly supported by the network. To support BA system integration, we aim to lower the cognitive distance between network protocol details and application requirements, so that complex BAS applications are easier to write, debug, and maintain. For example, an NDN-based BAS would use hierarchical naming rather than addresses and port numbers, removing the need for middleware to translate.  We will have to develop
@@ -30,6 +41,7 @@ layers~\cite{loeser2004low, skeie2006timeliness}.
 \end{itemize}
 
 \subsubsection{Trust and security}
+Fit NDN architectural mechanisms into security requirements
 \begin{itemize}
 \item Base on real administrative organization at UCLA
 \item Trust model? Hierarchical may work but may be in a different namespace from the data  (see Wentao’s work so far) 

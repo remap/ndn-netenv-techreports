@@ -150,21 +150,58 @@ Related to vehicular networking work.
 \subsection{Trust and security}
 
 Replacing Oauth2 for distributed processing is critical
+One
+entity (here, the `` user") maintains multiple publishers whose data are
+consumed by many services with varying levels of access based on the: type
+of data (as expressed in the name), level of granularity, and date/time
+when the data was produced. ABE seems a good fit here, is it viable for
+practical experimentation or do we need a directory-of-symmetric-keys or
+some other approach?  If not ABE, where should we begin for our approach?
+Are there existing best practices?
+
 
 \subsubsection{Trust model} 
 Leverage PKI as deployed
+Would like to start from the same tools being used for user/gateway trust management in NDN testbed for this application.  
+How to take advantage of the NDN signing infrastructure?
+Certificates and delegation of authority.
 
 \subsubsection{Identity}
 Each processing block in this diagram may come from a different service provider. 
 User may have different identity per service (or at least per flow). 
 Each step tends to generate derived data that must also be stored and may not be associated with the original identity.  
 
+We are exploring the idea of an ``identity manager", an application
+manages the certificates (identities) that an individual uses to interact
+with the various services involved in this application. Are there good
+examples of \emph{user interfaces} for identity management already?  In fact,
+pointers to state-of-the-art in end-user interfaces for security decision
+making would be helpful. Alex doesn't think there are many. 
+
 \subsubsection{Integrity} 
 
 \subsubsection{Confidentiality}
+
+Principal of minimum information. 
+
 Access control in "data flow" model for communication between processing components, replacing Oauth (with Tsinghua and UCLA).  Extensions to support epidemiological studies incorporating semi-anonymized opt-in data across large populations. 
 
-Name privacy considerations.
+We will need to come up with an approach for name encryption for
+this environment, in a way that still enables applications to operate on
+the namespace--perhaps without having to be concerned with
+decryption--once it has been decrypted and/or de-encapsulated.
+
+
+\subsubsection{Data flow model support}
+We imagine a data flow like model for this system:
+[Publisher]->[Processing]->[Processing]->[Visualization], with each []
+block being owned by a different entity and an objective to leak the
+minimum amount of context to the processing components.  I'm not sure we
+understand how to handle authentication /  access control of the
+intermediate processing blocks, to each other and to the source/sink of
+the data.  Where can we look for best practices for security in current
+data flow architectures?
+
 
 
 \subsection{Naming}
@@ -199,10 +236,14 @@ Borrow ideas from Named Function Networking concept for distributed processing
 
 \subsection{Storage}
 
+A distributed network of repos replaces the ecosystem of DSUs envisioned in the Open mHealth TCP/IP architecture. 
+
 (Hierarchical network of repositories, similar to BAS/BMS, including both personal repositories, service provider backups for personal data, and aggregated "anonymized" stores). 
 
+Write access control
 
-
+A mechanism for delegating authority to publish into a repository is
+necessary. 
 \subsection{Routing \& Forwarding}
 Mobile publishing support
 
