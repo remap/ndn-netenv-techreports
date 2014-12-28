@@ -63,6 +63,18 @@ Open mHealth lead architect as a primary challenge.
 
 Same approach (apparently) used in Human API mentioned earlier. 
 
+
+\subsection{User Interface}
+Begin with this, because consumer-facing. 
+
+\subsubsection{Mobile}
+\subsubsection{Website}
+Start with Ohmage front end (see previous slides).
+Web-based front end using NDN-JS to access derived data without location information.
+Examples: http://quantifiedself.com/fitbit/ 
+
+
+
 \subsection{NDNEx Application architecture}
 
 Translate existing REST-based approach?  How quickly to move to a new model of data exchange where transactions are mostly about (for example) keys. 
@@ -70,21 +82,70 @@ Translate existing REST-based approach?  How quickly to move to a new model of d
 Based on 
 PEIR, the personal environmental impact report, as a platform for participatory sensing systems research. Mun, M., Reddy, S., Shilton, K., Yau, N., Burke, J., Estrin, D., ... \& Boda, P. (2009, June). Proc. ACM Mobisys 2009. 
 
-
-\subsection{Naming}
-
-
-
-\subsection{Storage}
-
+  
+Capture (Anyang / Tsinghua / UCLA) 
+Storage (Tsinghua / UCLA)
+Processing (Basel)
+Presentation (REMAP)
+Security (Michigan)
 
 
 \subsection{Trust and security}
 
+Replacing Oauth2 for distributed processing is critical
+
+\subsubsection{Trust model} 
+Leverage PKI as deployed
+
+\subsubsection{Identity}
+Each processing block in this diagram may come from a different service provider. 
+User may have different identity per service (or at least per flow). 
+Each step tends to generate derived data that must also be stored and may not be associated with the original identity.  
+
+\subsubsection{Integrity} 
+
+\subsubsection{Confidentiality}
+Access control in "data flow" model for communication between processing components, replacing Oauth (with Tsinghua and UCLA).  Extensions to support epidemiological studies incorporating semi-anonymized opt-in data across large populations. 
+
+Name privacy considerations.
+
+
+\subsection{Naming}
+
+\subsubsection{Data}
+Personal health data (and metadata) namespace and repository design Ð focusing on support for physical activity data in the first round.  
+What schema? Initially, try direct mapping of Open mHealth schema to names
+
+\subsubsection{Certificates}
+
+\subsubsection{Processing}
+Borrow ideas from Named Function Networking concept for distributed processing
+
+
+\subsection{Storage}
+
+(Hierarchical network of repositories, similar to BAS/BMS, including both personal repositories, service provider backups for personal data, and aggregated "anonymized" stores). 
 
 
 
-\subsection{Communication}
+\subsection{Routing \& Forwarding}
 Mobile publishing support
+
+
+
+\begin{figure}
+\centering
+\subfigure[Mobile publisher connected to ``home'' hub, which directly routes its publishing prefix.]{
+\includegraphics[width=0.45\columnwidth, keepaspectratio=true]{figures/publisher-mobility-a}
+}
+\subfigure[Mobile publisher connected to another hub, which does not directly route its prefix.]{
+\includegraphics[width=0.45\columnwidth, keepaspectratio=true]{figures/publisher-mobility-b}
+}
+\caption{Mobile publisher scenario.}
+\label{fig:mobilepublisher}
+\end{figure}
+
+\subsection{Distributed Processing}
 Incorporate Haitao's design?
+Named Function Networking style support for distributed processing with University of Basel. 
 

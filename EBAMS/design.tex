@@ -26,25 +26,100 @@ Develop repository design and basic trust approach for offline report generation
 \end{itemize}
 
 
-\subsection{NDN-EBAMS   Application Architecture} 
+
+
+\subsection{NDN-EBAMS Application Architecture} 
  
- Cite Wentao's paper for full information on design
- 
- 
- 
- 
-\subsection{Naming}
-Discover
-Design focuses on the actual deployment
-Data sources \& sinks:  sensors, actuators.
-Physical space / location will be involved in trust and should be described consistently and considered along with routing / application implications.
-\subsection{Storage}
-Repository requirements
-\subsection{Trust and security}
+Cite Wentao's paper for full information on design
+
+  
+  
+ \subsection{Trust and security}
+\subsubsection{Trust model} 
+Leverage PKI as deployed
+Would like to start from the same tools being used for user/gateway trust management in NDN testbed for this application.  
+
+\subsubsection{Identity} 
+
+\subsubsection{Integrity} 
+
+\subsubsection{Confidentiality}
 Crypto approach.
 Groups: NDN-BmS developers at UCLA, UIUC, departmental/campus stakeholders, and testbed users. 
 Users:  Users possessing a cert in new system, and anonymous users on the web.
 Applications that are not associated with a real-world users but need credentials: aggregators, gateways, background processes, etc. 
 
+
+
+\subsection{Naming}
+\subsubsection{Data}
+Discover
+Design focuses on the actual deployment
+Data sources \& sinks:  sensors, actuators.
+Physical space / location will be involved in trust and should be described consistently and considered along with routing / application implications.
+Approach to naming/retrieving sample batches. 
+Approach to metadata describing sensor feeds. 
+
+Hierarchical data names and simple sensor/control abstraction.
+See also: 
+
+Dawson-Haggerty, Stephen, et al. "Enabling green building applications." Proceedings of the 6th Workshop on Hot Topics in Embedded Networked Sensors. ACM, 2010.
+
+Ortiz, Jorge, and David Culler. A system for managing physical data in buildings. Technical Report No. EECS-2010-128, EECS Department, University of California, Berkeley, 2010.
+
+Potentially can use names for:
+\begin{itemize}
+\item Abstraction (allow application generalization)
+\item Organization (by building area, system topology) 
+\item Metadata access (consistent approach)
+\item Aggregation (hierarchy inferred from names) 
+\end{itemize} 
+
+
+
+BOSS~\cite{Dawson-Haggerty2013BOSS} follows these references for building metadata. 
+
+[8] Bazjanac, V., et al. HVAC component data modeling using industry foundation classes. In System Simulation in Buildings (2002). 
+
+[30] Liu, X. et al, Requirements for a formal approach to represent information exchange requirements of a self-managing framework for HVAC systems. In ICCCBE (2012). 
+
+[40] Project Haystack. http://project-haystack.org/  
+
+
+\subsubsection{Certificates}
+
+\subsection{Storage}
+
+Repository for time-series data used in BOSS~\cite{Dawson-Haggerty2013BOSS} is readingdb, \url{https://github.com/stevedh/readingdb}.
+%% TODO: Review BOSS paper and incorporate here. 
+Their simplification of repositories is about data type more than query type:  focus on time series data from points. 
+MySQL not used because of expensive insert and poor scaling with large number of leaf keys.
+Low latency application interface for accessing the large repository of data at different granularity, a selection language, and a data transformation language. Enabling the construction of a pipeline of operators to the retrieved data. 
+
+Repository requirements to support sql-style access
+
+Designing and deploying hierarchical repositories for sensor data (from sensor module to panel to building to campus scale) that provide quick access to fresh data and efficient, redundant long-term storage. 
+
+More activity on repo-ng needed? 
+
+Reasonable performance on a variety of device classes  running as a component in a data producer and as a centralizer of data. 
+
+Write performance for main repo:  20,000 samples @ 1Hz on an ongoing basis.  
+
+Mechanism to export / move data offline. 
+
+Need a simple way to watch time-series prefixes. 
+
+Restore sync support for more complex namespaces. 
+
+\subsection{Routing \& Forwarding}
+
+Limit packets inside and outside? 
+
 \subsection{Communication}
 Alarms
+Efficient support for specific types of communication patterns found in these networks, like reliable notification of rare but critical events. 
+
+
+\subsection{User Interface}
+\subsubsection{Website}

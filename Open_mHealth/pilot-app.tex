@@ -12,7 +12,49 @@ In this network environment, we focus on consumer-facing applications, as shown 
 \end{center}
 \end{figure*}
 
-Our pilot applications:  \textbf{NDNEx} and the required \textbf{Identity Manager}. 
+For our use case, focus on a \textbf{simple ecosystem of composable services rather than a single siloed application.}
+
+Our pilot applications:  \textbf{NDNEx} (NDN-Exercise) and the required \textbf{Identity Manager}.  Supporting physical activity is both a critical part of building healthy communities and a key retail market. 
+
+NDNEx is a non-proprietary ecosystem for consumer physical activity data. 
+
+Start with end-user mobile+web application that captures and reports walking, jogging, and running activity.
+
+Calculate and report activity metrics based on GPS and accelerometer data  both automatically and self-identified rounds of exercise.  
+
+Ad-hoc and formal groups or teams. 
+
+Capable of location-based content push during the exercise, which can be used for health, entertainment, local, and team-related content. 
+
+Commercial parallels:  Nike+, Fitbit, Endomondo (see Figure~\ref{fig:endomondo}), etc. 
+
+\begin{figure}
+\begin{center}
+\includegraphics[width=.6\textwidth]{figures/endomondo}
+\caption{Endomondo commercial fitness tracker. \protect\url{https://www.endomondo.com/}}
+\label{fig:endomondo}
+\end{center}
+\end{figure}
+
+
+Envisioned as an open-data ecosystem, with different service providers at different stages in the processing chain, rather than a siloed application.
+
+Work that we can leverage (see related work above): 
+
+Open mHealth Toolset  including Ohmage reference platform and the Lifestreams concept. 
+
+Past CENS/UCLA participatory sensing research in activity classification,self-surveillance privacy, mobile phone based data collection.
+
+REMAPs funded collaborations on Urban Trails and technology for Parks with California State Parks, the Western National Parks Association, National Park Service, and the City of Los Angeles. 
+
+\begin{figure}
+\begin{center}
+\includegraphics[width=1\textwidth]{figures/ConceptualBlock}
+\caption{Conceptual block diagram showing data flow.}
+\label{fig:ConceptualBlock}
+\end{center}
+\end{figure}
+
 
 \subsection{Research Requirements} 
 
@@ -28,6 +70,8 @@ The Open mHealth team envisions that the Internet will interconnect 1)
 data capture, 2) secure storage, 3) modeling and analytics, and 4) user
 interface components to create a modular, layered sense-making framework.  
 %% Repeated from above.
+
+Adaptation of Open mHealth REST-based communication model to a data dissemination approach inspired by NDN.
 
 Naming and application design
 \begin{itemize}
@@ -49,3 +93,63 @@ Storage in the network
 \item Data filtering at the repo?
 \item New legal / economic relationship between the players
 \end{itemize}
+
+\subsection{Existing Building Blocks} 
+
+What we will leverage to build this application.
+
+\subsubsection{Capture: Ohmage \& Mobility}
+
+\url{http://ohmage.org/}
+
+ohmage is an open-source participatory sensing technology platform. It supports expressive project authoring; mobile phone-based data capture through both inquiry-based surveys and automated data capture as well as temporally and/or spatially triggered reminders, data visualization and real-time feedback; privacy respecting data management; and extensible data exploration. All captured data are automatically timestamped, geocoded and uploaded for analysis and visualization. 
+
+Tangmunarunkit, H., et al. "Ohmage: A General and Extensible End-to-End Participatory Sensing Platform. In submission. http://ohmage.org/static/ohmagehome/papers/ohmage.pdf
+
+
+\subsubsection{Storage: Open mHealth Data Storage Unit (DSU) Design}
+
+\url{https://github.com/openmhealth/developer/wiki/DSU-Overview}
+
+The Open mHealth DSU (Data Storage Unit) API Specification is an open specification for unified information sharing across disparate data streams. The idea is simple: create an easy-to-understand set of APIs that allow siloed data stores to share information. Third-party applications that understand this API specification can then create a single set of tools to access data across any of the servers.
+
+
+\subsubsection{Storage: Personal Data Vault} 
+
+Reference Derek's work here? 
+
+Mun, Min, et al. "Personal data vaults: a locus of control for personal data streams." Proceedings of the 6th International Conference. ACM, 2010.http://remap.ucla.edu/jburke/publications/Mun-et-al-2010-Personal-Data-Vaults.pdf
+
+Kang, J., Shilton, K., Estrin, D., Burke, J. "Self-surveillance privacy." Iowa L. Rev. 97 (2011): 809.http://escholarship.org/uc/item/1jk8b2q1.pdf
+
+\subsubsection{Processing: Open mHealth Data Processing Unit (DPU) Design}
+
+\url{https://github.com/openmhealth/developer/wiki/Open-mHealth-and-Data-Processing}
+
+DPUs are stateless modules that input and output data. They are designed to be embedded in other software or called remotely. They do not produce anything directly visible, but are the brains and muscles of an application. The concept of a DPU is inspired by the Unix Philosophy of creating small functional tools that can be chained and reused, rather than a single large application.
+
+\subsubsection{Processing: Named Function Networking Concept}
+
+\url{http://www.named-function.net/}
+
+Names serve to access and invoke functions, which incidentally can produce passive content once it is needed. New questions arise from this point of view, namely how the network organizes the flow of functions, which brings us squarely into active networking turf. 
+
+Initially, focusing on location-based triggers (geofencing) - to trigger location-based content.
+
+\subsubsection{Analytics / Presentation: Ohmage Front-end for Mobilize}
+
+\url{https://wiki.mobilizingcs.org/app/web}
+
+The web frontend (powered by the ohmage project) is used to provide students secure access to their data. It supports secure login, campaign management, data management and basic campaign monitoring and visualization. The students can review and share their data to the growing data set collected by their class. The web frontend can also be used to discover the answers to basic statistical inferences in real-time as data is being collected. When data collection is complete, the web frontend allows for easy exporting of the data to a more thorough statistical analysis tool. 
+
+\subsubsection{Analytics / Presentation: Lifestreams Dashboard}
+
+\cite{hsieh2013acm}
+
+\subsubsection{Content push: Trails Database}
+
+\url{http://gizmodo.com/los-angeles-launches-an-interactive-urban-trail-system-1541248828}
+
+The LASHP Trails Mobile Website gives residents and visitors to Northeast Downtown Los Angeles site-specific access to a dynamic combination of historic information and health-related activities along urban trails starting and ending at the Los Angeles State Historic Park. In collaboration with LA City Planning, the students, their parents, teachers, lawmakers, community members, and the California Endowment discussed the possibility of formalizing this trail network. California State Parks and the UCLA Interpretive Media Laboratory (IMLab) were asked to develop a proposal to formalize this trail network through a combination of wayfinding markers and a digital site that would incorporate historical information and images, along with calorie counting and mileage tracking capabilities.
+
+
