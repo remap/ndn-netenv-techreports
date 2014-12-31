@@ -23,24 +23,19 @@ building.  It serves as the primary design document for this application.
 
 \subsection{EBAMS Background}
 
-%\begin{figure*}
-%\begin{center}
-\begin{wrapfigure}{r}{0.6\textwidth}
-\vskip -12pt
-%\epsfig{file=figures/OpenmHealth-figure.eps,width=.48\textwidth}
-\includegraphics[width=.6\textwidth]{figures/BAS-Figure}
-\vskip -5pt
-\caption{{Example of building automation and management components, including sensors, controllers, and interfaces to both the public Internet and an enterprise intranet.  Securely integrating these heterogeneous components, while simplifying application development, is an important challenge posed by this network environment.}}
-\label{fig:BAS}
-\end{wrapfigure}
-%\end{center}
-%\end{figure*}
-
 For our purposes, Enterprise Building Automation and Management covers the intersection of three critical sub-areas: \emph{industrial control systems} (ICS), including supervisory control and data acquisition (SCADA) and so-called smart grid~\cite{fang2011smart}, \emph{enterprise networking}, and the \emph{Internet of Things} (IOT) movement~\cite{atzori2010internet}. Enterprise BAS and BMS are environments that bring both critical infrastructure considerations of ICS with exciting visions for the everyday built environment of IoT.  In this domain, significant engineering challenges have emerged along with the promise offered by the convergence of networking in ICS with traditional IT, a sea change described by NIST in their ICS security review~\cite{NIST_ICS}.  
 
 BAS and BMS are software/hardware systems that perform control, monitoring and management of heating, ventilation and air conditioning (HVAC), lighting, water, physical access and other building components. Their distributed, heterogeneous nature leads to a variety of challenges.  The IP protocol suite is increasingly used to network their components and as such is now a fundamental substrate of new buildings. However, IP networks suffer from limitations that impact innovation and trust in networked building systems, which we believe can be addressed with NDN.    
  
 BAS/BMS pose complementary challenges to those of mHealth. They integrate hundreds to thousands of data collection and control points often implemented by special-purpose embedded devices and managed by a single enterprise.  Some devices are mobile and others are fixed; some devices are power-constrained and wireless while others are hard-wired and continuously communicating. Figure~\ref{fig:BAS} shows a few components of a typical system, including thermostats used for adjusting HVAC, lighting control and energy monitoring. 
+
+\begin{figure*}
+\begin{center}
+\includegraphics[width=.6\textwidth]{figures/BAS-Figure}
+\caption{{Example of building automation and management components, including sensors, controllers, and interfaces to both the public Internet and an enterprise intranet.  Securely integrating these heterogeneous components, while simplifying application development, is an important challenge posed by this network environment.}}
+\label{fig:BAS}
+\end{center}
+\end{figure*}
 
 Security is a fundamental and critical challenge~\cite{knapp2011industrial}. 
 Like other ICS, BAS/BMS typically employ physical or logical isolation of the network as a primary security measure, which limits interoperability and integration.\footnote{In many cases, systems are left exposed to the Internet inadvertently. Only a few searches on \url{http://shodanhq.com/} make this abundantly clear.}   They also use a mixture of proprietary and open protocols, only a few of which offer intrinsic security. In many networks, there is no intrinsic security at lower layers, and only channel- and perimeter-based security above that, via SSL/TLS, VPNs, and routing configuration. Given the importance of integrating subsystems for applications such as energy management, fault detection, and synchronization,  network segregation and closed protocols are not a viable long-term approach. Figure~\ref{fig:BAS} shows an environment that supports access to control and monitoring from intranet web sites, but makes ``air gaps'' impossible and logical network separation hard to engineer and maintain for normal enterprises. 
@@ -101,6 +96,19 @@ Figure~\ref{fig:apogee-levels} shows the ``levels'' of an industry-standard Siem
 \item \textbf{Caching and storage integration} may provide significant advantages in distributed storage at all levels of the architecture, increasing \item data availability without power increase. 
 \item Intrinsic multicast; \textbf{many-to-many communication easier to deploy}. 
 \end{itemize}
+
+\subsection{Research Objectives} 
+
+{\bf Naming and application design.} The NDN architecture can reflect application knowledge (and needs) directly. Application logic for accessing devices can be captured in naming patterns and cryptographic signatures directly supported by the network. To support BA system integration, we aim to lower the cognitive distance between network protocol details and application requirements, so that complex BAS applications are easier to write, debug, and maintain. For example, an NDN-based BAS would use hierarchical naming rather than addresses and port numbers, removing the need for middleware to translate.  We will have to develop
+consistent, granular, application-specific naming of data sources and control points, to
+support changing topologies and device configurations.  NDN-network-based BAS could also 
+make routing or forwarding decisions based on application-level semantics, 
+essentially impossible in IP networks.
+
+{\bf Trust and security.} The trust model for this environment will emerge from the administrative organization of the enterprise and functional relationships among components.  We believe these relationships can be expressed in the data and control namespaces, allowing straightforward trust verification in the applications.  Extending our prior work in authenticated control, we plan to develop a system security approach that secures the data directly – through cryptographic signatures on data packets and optional encryption of content. As a result, anyone equipped with the right credential (in the trust framework) can securely access, configure, and/or control  devices using the same data name from any location in the enterprise. NDN-capable devices can then communicate on the network with authenticated messages, rather than relying on connection-level or physical segregation, or authentication present for user interface only.
+
+{\bf Embedded and real-time support.}  To examine how NDN will work at all layers of BAS and BMS, we must consider embedded and real-time systems, many of which have recently transitioned to IP-based communication.  Embedded platform support through both gateways and lightweight stacks for low-capability devices, including ''hard'' real-time communication when appropriate support exists at lower 
+layers~\cite{loeser2004low, skeie2006timeliness}.
 
 \subsection{Collaboration}
 

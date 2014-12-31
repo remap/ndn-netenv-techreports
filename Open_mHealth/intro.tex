@@ -31,7 +31,7 @@ building.  It serves as the primary design document for this application.
 \vskip -5pt
 \caption{Networked data producers and consumers in a diabetes management case study from the Open mHealth team, who promote interoperability between mobile health components via community-standardized data exchange.~\cite{SimEstrin2010}}
 \vskip 6pt
-\label{fig:mHealth}
+\label{fig:mHealth-diabetes}
 \end{wrapfigure}
 %\end{center}
 %\end{figure*}
@@ -77,7 +77,7 @@ be mapped to behavioral biomarkers for specific diseases
 etc)~\cite{Estrin_IPSN_2013}.
 
 
-For example, Figure~\ref{fig:mHealth} shows a network of open components
+For example, Figure~\ref{fig:mHealth-diabetes} shows a network of open components
 for self-care of diabetes, which affects 25.8M people in the U.S., 
 less than half of whom meet recommended standards, such as blood
 glucose index levels, for managing their own health. Type 1 diabetics
@@ -119,13 +119,7 @@ network environment to both drive and evaluate NDN.
 \end{center}
 \end{figure*}
 
-\subsection{Challenges of IP}
-
-\begin{itemize}
- \item
-\end{itemize}
-
-\subsection{Benefits of NDN}
+\subsection{Fit of NDN to Application Domain}
 
 \begin{itemize}
 \item Like NDN, Open mHealth  focuses on \textbf{named data as the ``thin waist'' of interoperability}. 
@@ -135,18 +129,17 @@ network environment to both drive and evaluate NDN.
 \item \textbf{Intrinsic disruption tolerance and multi-path support} are a good fit for mobile devices if challenges of mobile publishing can be addressed. 
 \end{itemize}
 
+\subsection{Research Objectives} 
+
+{\bf Naming and application design.} The Open mHealth architecture focuses on data exchange rather than system interoperability, which is well-suited for NDN. Using NDN rather than IP enables Open mHealth applications to be coded using data naming directly rather than having to create abstractions to translate data names to IP-based hosts providing services. We will explore how application architecture can be simplified and map closely to network architecture. With its emerging synchronization primitives, NDN will also enhance network support for synchronizing data across multiple devices. 
+
+{\bf Trust and security.} Because NDN does not rely on perimeter- or channel-based security, it will promote global health data ecosystems rather than previous walled garden approaches.   This shift has direct relevance for public health, by enabling research to draw from large populations. 
+
+{\bf Storage in the network.} NDN naturally supports distributed storage, which can ease the burden of fault-tolerance and load-balancing in large networks, reducing cost-of-entry and fostering innovation. 
+
 \subsection{Collaboration}
 
-We will partner with the Open mHealth team -- both its leadership and
-developers -- to understand the requirements and current state-of-the-art
-in this network environment, as well as limitations they face from the
-current Internet architecture. We will pick one or more 
-applications (e.g., diabetes management or post-heart attack health management) 
-that are representative of the envisioned ecosystem, and port existing software
-of the Open mHealth team to the NDN architecture.  We will use an interactive
-development process, soliciting regular feedback from the Open mHealth team.   
-
-Pilot application collaboration:
+NDN application collaboration:
 \begin{itemize}
 \item UCLA REMAP
 \item UCLA IRL
@@ -155,6 +148,16 @@ Pilot application collaboration:
 \item Basel 
 \item Anyang
 \end{itemize}
+
+Additionally, we will partner with the Open mHealth team -- both its leadership and
+developers -- to understand the requirements and current state-of-the-art
+in this network environment, as well as limitations they face from the
+current Internet architecture. We will pick one or more 
+applications (e.g., diabetes management or post-heart attack health management) 
+that are representative of the envisioned ecosystem, and port existing software
+of the Open mHealth team to the NDN architecture.  We will use an interactive
+development process, soliciting regular feedback from the Open mHealth team.   
+
 
 \subsection{Proposed Milestones 2014-2016}
 

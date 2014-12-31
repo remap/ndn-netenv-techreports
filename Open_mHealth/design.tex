@@ -7,33 +7,52 @@ Design new repository.
 Provide NDN-CCL and NFD support for Android. 
 Trying replacing REST backend in Ohmage with NDN.
 
-\paragraph{Challenges}
-
-For this application in particular, NDN provides much more relevant functionality at the network layer than IP.  
-So solutions in NDN have much more direct impact on the scalability, security, and ease of development; we need not build up additional layers on IP to get near the app challenges.
-
-Cite hourglass figure 
-
-\begin{itemize}
-\item Namespace / schema design
-\item Repository / storage design
-\item Service composability
-\item Authentication / identity assurance
-\item Data provenance
-\item Access auditing
-\item Mobile publishing
-\item Legal requirements for success
-\end{itemize}
-
 
 \paragraph{Approach}
 Follow up on mHealth design approach from Estrin \& Sim, 2010.
+Use Ohmage as a reference application. 
+
+Plan to create/port a mobile client for the Ohmage reference platform, which currently incorporates:
+Mobile application, LAMP stack back-end, REST communication
+
+Key pain point is OAuth 2.0:  Implementation relies on this – doesn’t scale to the DPU model and has numerous problems.  Quickly identified by 
+
+Open mHealth lead architect as a primary challenge.   
+
+Same approach (apparently) used in Human API mentioned earlier. 
+
+Capture (Anyang / Tsinghua / UCLA) 
+Storage (Tsinghua / UCLA)
+Processing (Basel)
+Presentation (REMAP)
+Security (Michigan)
+
+\paragraph{Design Goals} 
 
 \begin{itemize}
 \item \textbf{Interoperable, Internet-inspired data exchange} as the backbone of the application ecosystem
 \item \textbf{Thin waist of open data interchange standards} that will enable an ecosystem of sensing, storage, analysis, and user interface components to support medical discovery and evidence-based care 
 \item Market-supported, patient-centered landscape of innovative health applications
 \item \textbf{Patient-controlled, privacy-aware data exchange} across device, component, and application boundaries
+\end{itemize}
+
+
+\paragraph{What to keep from current Open mHealth design.}
+\begin{itemize}
+\item Data-centric rather than service-centric interoperability. $\Rightarrow$ \emph{Focus on data namespace design.}
+\item Distributed architecture of Capture, DSU, DPU, DVU. $\Rightarrow$ \emph{Implement data flow approach in NDN.}
+\item End user focus (not hospitals, doctors, etc.) $\Rightarrow$ \emph{Consumer app deployment scenario.}
+\item User-centric privacy approach. $\Rightarrow$ \emph{Need to inform user of choices, data flow.}
+\item Encrypted communications. $\Rightarrow$ \emph{Encryption-based access control, name encryption.}
+\item Mobile publishing. $\Rightarrow$ \emph{Use as our driver to solve this oft-cited challenge.}
+\end{itemize}
+
+\paragraph{What to discard from current Open mHealth design.}
+\begin{itemize}
+\item REST/HTTP: Move away from RPC call model and carrying state in Interests.
+\item Host-based endpoints for services:  focus on data dissemination model and NFN style processing. 
+\item OAuth: need new identity / authentication support. 
+\item Single storage ``location''. 
 \end{itemize}
 
 \paragraph{mHealth Reality Check}
@@ -52,45 +71,26 @@ Greenhalgh et al. in BMC Med Res. Methodology, 2011.
 Realist and meta-narrative evidence synthesis.
 \end{itemize}
 
-\subsection{Reference Application: Ohmage} 
-
-Plan to create/port a mobile client for the Ohmage reference platform, which currently incorporates:
-Mobile application, LAMP stack back-end, REST communication
-
-Key pain point is OAuth 2.0:  Implementation relies on this – doesn’t scale to the DPU model and has numerous problems.  Quickly identified by 
-
-Open mHealth lead architect as a primary challenge.   
-
-Same approach (apparently) used in Human API mentioned earlier. 
-
-
-\subsection{User Interface}
-Begin with this, because consumer-facing. 
-
-\subsubsection{Mobile}
-\subsubsection{Website}
-Start with Ohmage front end (see previous slides).
-Web-based front end using NDN-JS to access derived data without location information.
-Examples: http://quantifiedself.com/fitbit/ 
-
-
-
-\subsection{NDNEx Application architecture}
+\subsection{NDNEx Application components}
 
 Translate existing REST-based approach?  How quickly to move to a new model of data exchange where transactions are mostly about (for example) keys. 
 
 Based on 
 PEIR, the personal environmental impact report, as a platform for participatory sensing systems research. Mun, M., Reddy, S., Shilton, K., Yau, N., Burke, J., Estrin, D., ... \& Boda, P. (2009, June). Proc. ACM Mobisys 2009. 
 
-  
-Capture (Anyang / Tsinghua / UCLA) 
-Storage (Tsinghua / UCLA)
-Processing (Basel)
-Presentation (REMAP)
-Security (Michigan)
 
+User interacts with three pieces:
+\begin{itemize}
+\item Mobile capture application
+\item Website for visualization / review
+\item Identity manager
+\end{itemize}
 
-\subsubsection{Mobile application}
+%%%%%%%%%%%%%%
+
+\subsubsection{Mobile capture}
+
+One of two primary user interfaces. 
 
 Design for Android. Port NFD, tools.
 
@@ -105,6 +105,17 @@ Initial analysis of Ohmage mobile client communication completed by Prof. Euihyu
 
 From Basel: Today, we had an internal presentation from the Psychology Dept which explained their use of the Ohmage system that is running in Basel. Although NDNex comes too late for being applied in ongoing projects, these projects are a good source of insights about user requirements for our future NDNex system, especially the aspect of data sovereignty.
 
+
+\subsubsection{Building Block: Ohmage \& Mobility}
+
+\url{http://ohmage.org/}
+
+ohmage is an open-source participatory sensing technology platform. It supports: 1) expressive project authoring; 2) mobile phone-based data capture through both inquiry-based surveys and automated data capture as well as temporally and/or spatially triggered reminders, 3) data visualization and real-time feedback; privacy respecting data management; and 4) extensible data exploration. 
+
+Tangmunarunkit, H., et al. "Ohmage: A General and Extensible End-to-End Participatory Sensing Platform,” ACM Trans. on Intelligent Systems and Technology (in submission), UCLA CS Technical Report 140015. (Used in 20 projects.)  \url{http://web.ohmage.org/~hongsudt/pub/ohmage_ucla_140015.pdf}
+
+
+%%%%%%%%%%%%%%
 
 \subsubsection{Data Storage}
 
@@ -123,6 +134,23 @@ Current plan:  implement in Java using jNDN, for Android support.
 
 Design led by Jianxun in Dan Pei’s group at Tsinghua. 
 
+\paragraph{Reference: Open mHealth Data Storage Unit (DSU) Design}
+
+\url{https://github.com/openmhealth/developer/wiki/DSU-Overview}
+
+The Open mHealth DSU (Data Storage Unit) API Specification is an open specification for unified information sharing across disparate data streams. The idea is simple: create an easy-to-understand set of APIs that allow siloed data stores to share information. Third-party applications that understand this API specification can then create a single set of tools to access data across any of the servers.
+
+\paragraph{Building Block: Personal Data Vault}
+Reference Derek's work here? 
+
+Mun, Min, et al. "Personal data vaults: a locus of control for personal data streams." Proceedings of the 6th International Conference. ACM, 2010.http://remap.ucla.edu/jburke/publications/Mun-et-al-2010-Personal-Data-Vaults.pdf
+
+Kang, J., Shilton, K., Estrin, D., Burke, J. "Self-surveillance privacy." Iowa L. Rev. 97 (2011): 809.http://escholarship.org/uc/item/1jk8b2q1.pdf
+
+
+
+%%%%%%%%%%%%%%
+
 \subsubsection{Processing}
 
 Goal here is to have a few representative components implemented using NFN-style approach, not exactly the processing blocks listed above, necessarily.  
@@ -131,21 +159,64 @@ Ideally, provide composable data flow inspired by Google Cloud Dataflow, Apache 
 
 Start with GeoFencing, as activity classification is currently handled in the Mobility portion of Ohmage.  But, could also consider other application-specific processing ideas. 
 
+Web-based front end using NDN-JS with access to geofenced location information, providing location-specific content back to the mobile user.
+
+Related to vehicular networking work. 
+
+\paragraph{Reference: Open mHealth Data Processing Unit (DPU) Design}
+
+\url{https://github.com/openmhealth/developer/wiki/Open-mHealth-and-Data-Processing}
+
+DPUs are stateless modules that input and output data. They are designed to be embedded in other software or called remotely. They do not produce anything directly visible, but are the brains and muscles of an application. The concept of a DPU is inspired by the Unix Philosophy of creating small functional tools that can be chained and reused, rather than a single large application.
+
+\paragraph{Building Block: Named Function Networking }
+
+\url{http://www.named-function.net/}
+
+Names serve to access and invoke functions, which incidentally can produce passive content once it is needed. New questions arise from this point of view, namely how the network organizes the flow of functions, which brings us squarely into active networking turf. 
+
+Initially, focusing on location-based triggers (geofencing) - to trigger location-based content.
+
+\subsubsection{Content Source: Trails Database}
+
+\url{http://archinect.com/news/article/111897927/tour-los-angeles-history-with-ucla-s-new-interactive-urban-trail-app}
+
+The LASHP Trails Mobile Website gives residents and visitors to Northeast Downtown Los Angeles site-specific access to a dynamic combination of historic information and health-related activities along urban trails starting and ending at the Los Angeles State Historic Park. 
+
+
+%%%%%%%%%%%%%%
+
 \subsubsection{Visualization}
 Start with Ohmage web front end
 And Lifestreams?
 NDN-JS and D3
 Web-based front end using NDN-JS with access to geofenced location information, providing (for example) running trail visualization.
 Perhaps use many GPX format visualizers.  E.g., \url{http://flowingdata.com/2014/02/05/where-people-run/}
-  
-\subsubsection{Location-based Content Emitter}
-Web-based front end using NDN-JS with access to geofenced location information, providing location-specific content back to the mobile user.
 
-Related to vehicular networking work. 
-  
-  
+Web-based front end using NDN-JS to access derived data without location information.
+Examples: http://quantifiedself.com/fitbit/   
+
+
+\paragraph{Reference: Lifestreams Dashboard}
+
+\cite{hsieh2013acm}
+
+\paragraph{Building Block: Analytics / Presentation: Ohmage Front-end for Mobilize}
+
+\url{https://wiki.mobilizingcs.org/app/web}
+
+The web frontend (powered by the ohmage project) is used to provide students secure access to their data. It supports secure login, campaign management, data management and basic campaign monitoring and visualization. The students can review and share their data to the growing data set collected by their class. The web frontend can also be used to discover the answers to basic statistical inferences in real-time as data is being collected. When data collection is complete, the web frontend allows for easy exporting of the data to a more thorough statistical analysis tool. 
+
+
+
+%%%%%%%%%%%%%%
+
 \subsubsection{Identity Manager}
   
+  
+  
+  
+%%%%%%%%%%%%%%
   
 \subsection{Trust and security}
 
@@ -202,7 +273,8 @@ intermediate processing blocks, to each other and to the source/sink of
 the data.  Where can we look for best practices for security in current
 data flow architectures?
 
-
+%%%%%%%%%%%%%%
+  
 
 \subsection{Naming}
 
@@ -233,6 +305,8 @@ JSON payload.
 \subsubsection{Processing}
 Borrow ideas from Named Function Networking concept for distributed processing
 
+%%%%%%%%%%%%%%
+  
 
 \subsection{Storage}
 
@@ -264,4 +338,7 @@ Mobile publishing support
 \subsection{Distributed Processing}
 Incorporate Haitao's design?
 Named Function Networking style support for distributed processing with University of Basel. 
+
+
+
 
