@@ -97,8 +97,8 @@ a missed opportunity to
 provide more comprehensive analysis and coaching to the patient and more
 complete longitudinal data to providers.
 
-The Open mHealth team instead advocates an interoperable,  Internet-inspired
-approach. They propose a thin waist of open data interchange standards
+\textbf{The Open mHealth team instead advocates an interoperable,  Internet-inspired
+approach.} They propose a thin waist of open data interchange standards
 that will enable an ecosystem of sensing, storage, analysis, and user
 interface components to support medical
 discovery and evidence-based care.  In the same way that the Internet's
@@ -118,6 +118,13 @@ network environment to both drive and evaluate NDN.
 \label{fig:mHealth}
 \end{center}
 \end{figure*}
+
+\subsection{Challenges of IP}
+
+\begin{itemize}
+\item Locating endpoints to source/sink data.
+\item Key pain point is OAuth 2.0:  Implementation relies on this – doesn’t scale to the DPU model and has numerous problems.  Quickly identified by 
+\end{itemize}
 
 \subsection{Fit of NDN to Application Domain}
 
@@ -141,12 +148,13 @@ network environment to both drive and evaluate NDN.
 
 NDN application collaboration:
 \begin{itemize}
-\item UCLA REMAP
-\item UCLA IRL
-\item U. Michigan
-\item Tsinghua
-\item Basel 
-\item Anyang
+\item UCLA REMAP - application design; library support; web-based visualization; values in design.
+\item UCLA IRL - architecture implications; repository; library and forwarder support; trust and security. 
+\item U. Arizona - forwarder support; NFD Android port. 
+\item U. Michigan - trust and security.
+\item Tsinghua - repository. 
+\item Basel - data flow processing using NFN.
+\item Anyang - Ohmage capture application port. 
 \end{itemize}
 
 Additionally, we will partner with the Open mHealth team -- both its leadership and

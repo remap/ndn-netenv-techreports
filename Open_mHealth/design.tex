@@ -1,66 +1,41 @@
-\section{Design}
+\section{Design of NDNEx}
 
-Review and evaluation of Ohmage reference application and open mHealth schema.
-Review case studies. 
-Design and prototype alternative trust / security approach to current OAuth2-based mechanism. 
-Design new repository. 
-Provide NDN-CCL and NFD support for Android. 
-Trying replacing REST backend in Ohmage with NDN.
-
-
-\paragraph{Approach}
-Follow up on mHealth design approach from Estrin \& Sim, 2010.
-Use Ohmage as a reference application. 
-
-Plan to create/port a mobile client for the Ohmage reference platform, which currently incorporates:
-Mobile application, LAMP stack back-end, REST communication
-
-Key pain point is OAuth 2.0:  Implementation relies on this – doesn’t scale to the DPU model and has numerous problems.  Quickly identified by 
-
-Open mHealth lead architect as a primary challenge.   
-
-Same approach (apparently) used in Human API mentioned earlier. 
-
-Capture (Anyang / Tsinghua / UCLA) 
-Storage (Tsinghua / UCLA)
-Processing (Basel)
-Presentation (REMAP)
-Security (Michigan)
+\paragraph{Basis for Design}
+\begin{itemize}
+\item Review and evaluation of Ohmage reference application and open mHealth schema.
+\item Review high level motivation of Estrin \& Sim, 2010 and other references above. 
+\item Review case studies, including those on Ohmage website and in the Appendices. 
+\item Review Past CENS/UCLA participatory sensing research in activity classification,self-surveillance privacy, mobile phone based data collection.
+\end{itemize}
 
 \paragraph{Design Goals} 
 
 \begin{itemize}
-\item \textbf{Interoperable, Internet-inspired data exchange} as the backbone of the application ecosystem
+\item \textbf{Interoperable, Internet-inspired data exchange} as the backbone of the application ecosystem. 
 \item \textbf{Thin waist of open data interchange standards} that will enable an ecosystem of sensing, storage, analysis, and user interface components to support medical discovery and evidence-based care 
 \item Market-supported, patient-centered landscape of innovative health applications
 \item \textbf{Patient-controlled, privacy-aware data exchange} across device, component, and application boundaries
-\end{itemize}
-
-
-\paragraph{What to keep from current Open mHealth design.}
-\begin{itemize}
-\item Data-centric rather than service-centric interoperability. $\Rightarrow$ \emph{Focus on data namespace design.}
-\item Distributed architecture of Capture, DSU, DPU, DVU. $\Rightarrow$ \emph{Implement data flow approach in NDN.}
-\item End user focus (not hospitals, doctors, etc.) $\Rightarrow$ \emph{Consumer app deployment scenario.}
-\item User-centric privacy approach. $\Rightarrow$ \emph{Need to inform user of choices, data flow.}
-\item Encrypted communications. $\Rightarrow$ \emph{Encryption-based access control, name encryption.}
-\item Mobile publishing. $\Rightarrow$ \emph{Use as our driver to solve this oft-cited challenge.}
-\end{itemize}
-
-\paragraph{What to discard from current Open mHealth design.}
-\begin{itemize}
-\item REST/HTTP: Move away from RPC call model and carrying state in Interests.
-\item Host-based endpoints for services:  focus on data dissemination model and NFN style processing. 
-\item OAuth: need new identity / authentication support. 
-\item Single storage ``location''. 
-\end{itemize}
+\item Imported from Open mHealth:
+    \begin{itemize}
+    \item Data-centric rather than service-centric interoperability. $\Rightarrow$ \textbf{Focus on data namespace design.}
+    \item Distributed architecture of Capture, DSU, DPU, DVU. $\Rightarrow$ \textbf{Implement data flow approach in NDN.}
+    \item End user focus (not hospitals, doctors, etc.) $\Rightarrow$ \textbf{Consumer app deployment scenario.}
+    \item User-centric privacy approach. $\Rightarrow$ \textbf{Need to inform user of choices, data flow.}
+    \item Encrypted communications. $\Rightarrow$ \textbf{Encryption-based access control, name encryption.}
+    \item Mobile publishing. $\Rightarrow$ \textbf{Use as our driver to solve this oft-cited challenge.}
+    \end{itemize}
+\item In contrast to Open mHealth:
+    \begin{itemize}
+    \item REST/HTTP is not used.  $\Rightarrow$ \textbf{Move away from RPC call model} and carrying state in Interests, towards data dissemination.
+    \item Host-based endpoints for services. $\Rightarrow$ \textbf{Focus on data dissemination model} and NFN style \textbf{distributed processing}. 
+    \item OAuth authentication $\Rightarrow$ Need new identity / authentication approach. 
+    \item Single storage ``location'' $\Rightarrow$ \textbf{Distributed, ``personal'' repositories}. 
+    \end{itemize}
+\end{itemize} 
 
 \paragraph{mHealth Reality Check}
-
-%% From 
-%% PLOS Medicine Editors. "A reality checkpoint for mobile health: three challenges to overcome." PLoS Medicine 10.2 (2013).
+A reality check for all mHealth applications, from the PLOS Medicine Editors. "A reality checkpoint for mobile health: three challenges to overcome." PLoS Medicine 10.2 (2013).
 %% TODO: Add to cites
-
 \begin{itemize}
 \item \textbf{Are your systems interoperable?}
 Estrin \& Sim in Science, 2010.  Open mHealth. 
@@ -71,58 +46,72 @@ Greenhalgh et al. in BMC Med Res. Methodology, 2011.
 Realist and meta-narrative evidence synthesis.
 \end{itemize}
 
-\subsection{NDNEx Application components}
+\subsection{NDNEx Ecosystem components}
 
-Translate existing REST-based approach?  How quickly to move to a new model of data exchange where transactions are mostly about (for example) keys. 
+First, we introduce the components of the NDNEx application ecosystem, then we discuss overall design strategies for trust, naming, etc. 
 
-Based on 
+We use Ohmage client and server as references applications, and a conceptual design based on  
 PEIR, the personal environmental impact report, as a platform for participatory sensing systems research. Mun, M., Reddy, S., Shilton, K., Yau, N., Burke, J., Estrin, D., ... \& Boda, P. (2009, June). Proc. ACM Mobisys 2009. 
-
 
 User interacts with three pieces:
 \begin{itemize}
 \item Mobile capture application
 \item Website for visualization / review
-\item Identity manager
+\item Identity manager (newly envisioned mobile component)
 \end{itemize}
+
+\begin{figure}
+\begin{center}
+\includegraphics[width=.8\textwidth]{figures/NDNEx-App-Architecture-01}
+\caption{Draft NDNEx ecosystem design.}
+\label{fig:ndnex-ecosystem}
+\end{center}
+\end{figure}
 
 %%%%%%%%%%%%%%
 
-\subsubsection{Mobile capture}
+\subsubsection{Ohmage-NDN Mobile Activity Capture}
 
-One of two primary user interfaces. 
+\paragraph{Responsible team members}
+Anyang University.
 
-Design for Android. Port NFD, tools.
+\paragraph{Function}
+Capture location and activity information, publish. 
 
-We are going to use the Ohmage Android client (including the Mobility module) with only the in-app storage and communication changed to NDN. 
-See (Tangmunarunkit, H., et al., 2014) and also the papers on the Ohmage website. 
+\paragraph{Approach}
+ 
+Initially, we will only support Android. Port NFD, tools. Provide NDN-CCL and NFD support for Android. 
 
-Note that Mobility generates activity classified data that may not require the Activity Classification DPU in the initial version.
-
-Instance of TCP/IP Ohmage (client and server) is now up and running thanks to Haitao in Lixia’s group at UCLA.  
+Mobile capture application is one of two primary user interfaces.  
 
 Initial analysis of Ohmage mobile client communication completed by Prof. Euihyun Jung’s group from Anyang Univ.   
 
 From Basel: Today, we had an internal presentation from the Psychology Dept which explained their use of the Ohmage system that is running in Basel. Although NDNex comes too late for being applied in ongoing projects, these projects are a good source of insights about user requirements for our future NDNex system, especially the aspect of data sovereignty.
 
-
-\subsubsection{Building Block: Ohmage \& Mobility}
+\paragraph{Building Block: Ohmage \& Mobility}
 
 \url{http://ohmage.org/}
+We are going to use the Ohmage Android client (including the Mobility module) with only the in-app storage and communication changed to NDN. See (Tangmunarunkit, H., et al., 2014) and also the papers on the Ohmage website. Note that Mobility generates activity classified data that may not require the Activity Classification DPU in the initial version.
 
 ohmage is an open-source participatory sensing technology platform. It supports: 1) expressive project authoring; 2) mobile phone-based data capture through both inquiry-based surveys and automated data capture as well as temporally and/or spatially triggered reminders, 3) data visualization and real-time feedback; privacy respecting data management; and 4) extensible data exploration. 
 
 Tangmunarunkit, H., et al. "Ohmage: A General and Extensible End-to-End Participatory Sensing Platform,” ACM Trans. on Intelligent Systems and Technology (in submission), UCLA CS Technical Report 140015. (Used in 20 projects.)  \url{http://web.ohmage.org/~hongsudt/pub/ohmage_ucla_140015.pdf}
 
-
 %%%%%%%%%%%%%%
 
-\subsubsection{Data Storage}
+\subsubsection{Personal Data Repository}
 
-Approach:  One or more new NDN repo designs supporting a hierarchy of storage needs: mobile device, user private repository, temporary processing storage.
+\paragraph{Responsible team members}
+Design led by Jianxun in Dan Pei’s group at Tsinghua.
 
-Requirements: From Open mHealth Data Storage Unit (DSU) Design and overall application architecture.
+\paragraph{Function}
 
+Provide Open mHealth Data Storage Unit (DSU) functionality.  (Also, ``personal data vault''.) 
+Personal in that it is controlled by the end user.  NOT necessarily a home repository.  More realistically, a storage service with fiduciary responsibility to protect the data of the end-user per Kang et al. 
+
+\paragraph{Approach}
+
+One or more new NDN repo designs supporting a hierarchy of storage needs: mobile device, user private repository, temporary processing storage.
 Storage at:
 \begin{itemize}
 \item The mobile device itself.
@@ -130,9 +119,7 @@ Storage at:
 \item Temporary storage for processing and visualization components. 
 \end{itemize}
 
-Current plan:  implement in Java using jNDN, for Android support. 
-
-Design led by Jianxun in Dan Pei’s group at Tsinghua. 
+Current plan:  implement in Java using jNDN, for Android support.  
 
 \paragraph{Reference: Open mHealth Data Storage Unit (DSU) Design}
 
@@ -148,16 +135,21 @@ Mun, Min, et al. "Personal data vaults: a locus of control for personal data str
 Kang, J., Shilton, K., Estrin, D., Burke, J. "Self-surveillance privacy." Iowa L. Rev. 97 (2011): 809.http://escholarship.org/uc/item/1jk8b2q1.pdf
 
 
-
 %%%%%%%%%%%%%%
 
-\subsubsection{Processing}
+\subsubsection{Distributed Processing Blocks}
 
-Goal here is to have a few representative components implemented using NFN-style approach, not exactly the processing blocks listed above, necessarily.  
+\paragraph{Responsible team members}
+Basel
+
+\paragraph{Function}
+Goal here is to have a few representative components implemented using NFN-style approach, not exactly the processing blocks listed above, necessarily.   Start with GeoFencing, as activity classification is currently handled in the Mobility portion of Ohmage.  But, could also consider other application-specific processing ideas. 
+
+Initially, focusing on location-based triggers (geofencing) - to trigger location-based content.
+
+\paragraph{Approach}
 
 Ideally, provide composable data flow inspired by Google Cloud Dataflow, Apache Spark, etc.  
-
-Start with GeoFencing, as activity classification is currently handled in the Mobility portion of Ohmage.  But, could also consider other application-specific processing ideas. 
 
 Web-based front end using NDN-JS with access to geofenced location information, providing location-specific content back to the mobile user.
 
@@ -175,35 +167,38 @@ DPUs are stateless modules that input and output data. They are designed to be e
 
 Names serve to access and invoke functions, which incidentally can produce passive content once it is needed. New questions arise from this point of view, namely how the network organizes the flow of functions, which brings us squarely into active networking turf. 
 
-Initially, focusing on location-based triggers (geofencing) - to trigger location-based content.
-
 \subsubsection{Content Source: Trails Database}
 
 \url{http://archinect.com/news/article/111897927/tour-los-angeles-history-with-ucla-s-new-interactive-urban-trail-app}
 
 The LASHP Trails Mobile Website gives residents and visitors to Northeast Downtown Los Angeles site-specific access to a dynamic combination of historic information and health-related activities along urban trails starting and ending at the Los Angeles State Historic Park. 
 
-
 %%%%%%%%%%%%%%
 
-\subsubsection{Visualization}
+\subsubsection{Visualization Interface}
+
+\paragraph{Responsible team members}
+UCLA REMAP
+
+\paragraph{Function}
+Provide basic visualization of fitness data.
+
+\paragraph{Approach}
 Start with Ohmage web front end
-And Lifestreams?
 NDN-JS and D3
 Web-based front end using NDN-JS with access to geofenced location information, providing (for example) running trail visualization.
 Perhaps use many GPX format visualizers.  E.g., \url{http://flowingdata.com/2014/02/05/where-people-run/}
 
-Web-based front end using NDN-JS to access derived data without location information.
-Examples: http://quantifiedself.com/fitbit/   
-
-
 \paragraph{Reference: Lifestreams Dashboard}
-
 \cite{hsieh2013acm}
 
 \paragraph{Building Block: Analytics / Presentation: Ohmage Front-end for Mobilize}
 
 \url{https://wiki.mobilizingcs.org/app/web}
+
+And Lifestreams?
+Web-based front end using NDN-JS to access derived data without location information.
+Examples: http://quantifiedself.com/fitbit/   
 
 The web frontend (powered by the ohmage project) is used to provide students secure access to their data. It supports secure login, campaign management, data management and basic campaign monitoring and visualization. The students can review and share their data to the growing data set collected by their class. The web frontend can also be used to discover the answers to basic statistical inferences in real-time as data is being collected. When data collection is complete, the web frontend allows for easy exporting of the data to a more thorough statistical analysis tool. 
 
@@ -212,13 +207,16 @@ The web frontend (powered by the ohmage project) is used to provide students sec
 %%%%%%%%%%%%%%
 
 \subsubsection{Identity Manager}
-  
-  
-  
+    
+\paragraph{Responsible team members}
+UCLA IRL (Yingdi)? and REMAP (Dustin)?
   
 %%%%%%%%%%%%%%
   
 \subsection{Trust and security}
+
+\paragraph{Responsible team members}
+U. Michigan, UCLA IRL, UCLA REMAP
 
 Replacing Oauth2 for distributed processing is critical
 One
@@ -275,8 +273,11 @@ data flow architectures?
 
 %%%%%%%%%%%%%%
   
-
 \subsection{Naming}
+
+\paragraph{Responsible team members}
+UCLA REMAP, UCLA IRL
+
 
 \subsubsection{Data}
 Personal health data (and metadata) namespace and repository design – focusing on support for physical activity data in the first round.  
@@ -307,8 +308,10 @@ Borrow ideas from Named Function Networking concept for distributed processing
 
 %%%%%%%%%%%%%%
   
-
 \subsection{Storage}
+
+\paragraph{Responsible team members}
+UCLA IRL, Tsinghua, UCLA REMAP
 
 A distributed network of repos replaces the ecosystem of DSUs envisioned in the Open mHealth TCP/IP architecture. 
 
@@ -318,10 +321,15 @@ Write access control
 
 A mechanism for delegating authority to publish into a repository is
 necessary. 
+
+%%%%%%%%%%%%%%
+  
 \subsection{Routing \& Forwarding}
-Mobile publishing support
 
+\paragraph{Responsible team members}
+UCLA IRL
 
+Mobile publishing support. NDNS?
 
 \begin{figure}
 \centering
@@ -334,11 +342,5 @@ Mobile publishing support
 \caption{Mobile publisher scenario.}
 \label{fig:mobilepublisher}
 \end{figure}
-
-\subsection{Distributed Processing}
-Incorporate Haitao's design?
-Named Function Networking style support for distributed processing with University of Basel. 
-
-
 
 

@@ -1,22 +1,24 @@
-\section{Pilot Application}
+\section{Pilot Application: NDNEX}
 
-In this network environment, we focus on consumer-facing applications, as shown in Figure~\ref{fig:continuum}. 
-Mobile physical activity monitoring applications
-(fitness tracker) with location-based content push.
+\subsection{Introduction}
 
-For our use case, focus on a \textbf{simple ecosystem of composable services rather than a single siloed application.}
+Our pilot application for this network environment is \textbf{NDNEx} (NDN-Exercise) and related a user-facing \textbf{Identity Manager}.  Supporting physical activity is both a critical part of building healthy communities and a key retail market. Per the original proposal, we focus on a consumer-facing application, as shown in Figure~\ref{fig:continuum}, rather than clinical applications or other with formal connections to the healthcare system. 
 
-Our pilot application:  \textbf{NDNEx} (NDN-Exercise) and a user-facing \textbf{Identity Manager}.  Supporting physical activity is both a critical part of building healthy communities and a key retail market. 
+NDNEx is a mobile physical activity monitoring application (fitness tracker) that supports location-based notifications / content push. Commercial parallels include  Nike+, Fitbit, Endomondo (see Figure~\ref{fig:endomondo}), etc. It also is a non-proprietary ecosystem for consumer physical activity data. Following the philosophy of Open mHealth, our objective is to create NDNEx, which is perceived by the user as a single application, through  a \textbf{simple ecosystem of composable services} rather than siloed application. In this way, it is to act as an example of interoperating components of an Open mHealth ecosystem.  This places additional requirements on the design. 
 
-Our objective is not only an application.
+NDNEx targets  the following features for the end-user:
+\begin{itemize}
+\item Capture and report walking, jogging, and running activity. 
+\item Calculate and report activity metrics based on GPS and accelerometer data for both automatically and self-identified rounds of exercise.  
+\item Support comparison within ad-hoc and formal groups or teams. 
+\item Provide location-based content push during the exercise, which can be used for health, entertainment, local, and team-related content. 
+\end{itemize}
 
-It is to act as an example of interoperating components of an Open mHealth ecosystem.
-
-This places additional requirements on the design.
-
-See Deborah's TEDMED talk: 
-\url{https://www.youtube.com/watch?feature=player_embedded&v=lAEhSGYEHWU}
-
+The Open mHealth team envisions that the Internet will interconnect 1)
+data capture, 2) secure storage, 3) modeling and analytics, and 4) user
+interface components to create a modular, layered sense-making framework.
+NDNEx will include examples of each of these pieces, which are described in
+more detail in the next section.
 
 \begin{figure*}
 \begin{center}
@@ -28,19 +30,6 @@ See Deborah's TEDMED talk:
 \end{center}
 \end{figure*}
 
-
-NDNEx is a non-proprietary ecosystem for consumer physical activity data. 
-
-Start with end-user mobile+web application that captures and reports walking, jogging, and running activity.
-
-Calculate and report activity metrics based on GPS and accelerometer data  both automatically and self-identified rounds of exercise.  
-
-Ad-hoc and formal groups or teams. 
-
-Capable of location-based content push during the exercise, which can be used for health, entertainment, local, and team-related content. 
-
-Commercial parallels:  Nike+, Fitbit, Endomondo (see Figure~\ref{fig:endomondo}), etc. 
-
 \begin{figure}
 \begin{center}
 \includegraphics[width=.6\textwidth]{figures/endomondo}
@@ -48,17 +37,6 @@ Commercial parallels:  Nike+, Fitbit, Endomondo (see Figure~\ref{fig:endomondo})
 \label{fig:endomondo}
 \end{center}
 \end{figure}
-
-
-Envisioned as an open-data ecosystem, with different service providers at different stages in the processing chain, rather than a siloed application.
-
-Work that we can leverage (see related work above): 
-
-Open mHealth Toolset  including Ohmage reference platform and the Lifestreams concept. 
-
-Past CENS/UCLA participatory sensing research in activity classification,self-surveillance privacy, mobile phone based data collection.
-
-REMAPs funded collaborations on Urban Trails and technology for Parks with California State Parks, the Western National Parks Association, National Park Service, and the City of Los Angeles. 
 
 \begin{figure}
 \begin{center}
@@ -68,18 +46,10 @@ REMAPs funded collaborations on Urban Trails and technology for Parks with Calif
 \end{center}
 \end{figure}
 
-
-
-\subsection{Application Requirements}
-
-For this application in particular, NDN provides much more relevant functionality at the network layer than IP.  
-So solutions in NDN have much more direct impact on the scalability, security, and ease of development; we need not build up additional layers on IP to get near the app challenges.
-
-Cite hourglass figure 
-
+NDNEx requires specific design of the following, as an example of the Open mHealth network environment.  
 \begin{itemize}
-\item Namespace / schema design
-\item Repository / storage design
+\item Namespace / schema 
+\item Repository / storage 
 \item Service composability
 \item Authentication / identity assurance
 \item Data provenance
@@ -88,50 +58,56 @@ Cite hourglass figure
 \item Legal requirements for success
 \end{itemize}
 
-The Open mHealth team envisions that the Internet will interconnect 1)
-data capture, 2) secure storage, 3) modeling and analytics, and 4) user
-interface components to create a modular, layered sense-making framework.  
+\subsection{Application Requirements}
+
+Fundamentally, NDNEx is to be achieved through an open-data ecosystem that follows the Open mHealth paradigm, but adapting its REST-based communication model to a data dissemination approach using NDN.  Each component could be provided by  different service providers at different stages in the processing chain, rather than a siloed application.
+
+The design should rely as much as possible on basic NDN primitives (hierarchical naming, interest/data exchange, sync, repositories, keys-as-data, etc.) as possible, rather than designing new protocols.    Given that Open mHealth already envisions a data-centric thin waist in their ecosystem, NDN provides much more relevant functionality at the network layer than IP.   So basic solutions in NDN have much more direct impact on the scalability, security, and ease of development; we need not build up additional layers on IP to get near the app challenges.
+
+The application architecture should be consistent with the pieces above and from previous participatory sensing projects. (e.g., Mun et al, 2009)
+  
 %% Repeated from above.
-
-Adaptation of Open mHealth REST-based communication model to a data dissemination approach inspired by NDN.
-
 \subsubsection{Naming} 
 \begin{itemize}
-\item \textbf{Data format namespace design} comes directly from Open mHealth developer documentation. 
-\item \textbf{Application architecture} consistent with the pieces above and from previous participatory sensing projects. (e.g., Mun et al, 2009)
-\item What schema? Initially, try direct mapping of Open mHealth schema
+\item \textbf{Data format namespace design} shall come directly from Open mHealth developer documentation. 
+\item \textbf{Name and data} schemes should direct mappings of Open mHealth schema
 \item Borrow ideas from Named Function Networking concept for distributed processing
-\item Translate existing REST-based approach or do pure NDN? 
-\item Represent raw time-location data (GPS, accelerometer) from mobiles. 
-\item Support successive rounds of processing that, for example:  
-    \begin{itemize}
-    \item Generate classified activity data that follows the Physical Activity JSON schema and perhaps other related schemas.  (This happens at client-side in Ohmage Mobility but could happen at a DPU.)	
-    \item Identify / segment ``bouts”''of physical activity or exercise. 
-    \item Add features to a bout from DPUs to the existing store. 
-    \end{itemize}
 \item Consumers should be able to access raw and processed data for a certain time period.
 \item Consumers should be able to efficiently read data sequentially. 
-\end{itemize}
+\item Data will include:
+    \begin{itemize}
+    \item Raw time-location data (GPS, accelerometer) from mobiles. 
+    \item Successive rounds of processing that, for example:  
+        \begin{itemize}
+        \item Generate classified activity data that follows the Physical Activity JSON schema and perhaps other related schemas.  (This happens at client-side in Ohmage Mobility but could happen at a DPU.)	
+        \item Identify / segment ``bouts”''of physical activity or exercise. 
+        \item Add features to a bout from DPUs to the existing store. 
+        \end{itemize}
+    \end{itemize}
+    \item End-user configuration information
+    \item Identity and trust related data
+\end{itemize} 
 
 \subsubsection{Trust and security}
 
-Fit NDN architectural mechanisms into security requirements
+Our objective is to see how well the NDN architectural mechanisms fit into security requirements, and propose new ones where necessary. 
 \begin{itemize}
-\item \textbf{Identity and trust management} scenario comes from our proposed application use case.  (Recall:  Not just an app, an example of interoperating components in an ecosystem.)
-\item Provide granular access control over various components of the data namespace – in particular, raw location data. 
-\item Replacing Oauth2 for distributed processing is critical
-\item Data encryption requirements
-\item Name privacy issues
+\item \textbf{Identity and trust management} scenario shall come from the notion of NDNEx as consisting of interoperating components in an ecosystem, not a silo'd application. 
+\item All data should be encrypted
+\item Provide granular access control over various components of the data namespace – in particular, raw location data.  
+\item Doing better than Oauth2 for securing distributed processing is critical
 \item Follow passive key publication approach (rather than active) if possible. 
+\item If possible, we should support different identities relative each part of the system: collection, processing, and visualization, such as:
+    \begin{itemize}
+    \item Collection: User may publish data to serve multiple applications, but doesn’t want them to be able to conspire / correlate that they are the same user.
+    \item Processing:  Design should provide the minimum possible information to the processing components about user identity. 
+    \item Visualization: Visible face of “the app” to the user. 
+    \end{itemize}
 \end{itemize}
-Can / should we support different identities relative each part of the system: collection, processing, and visualization?
-Collection: User may publish data to serve multiple applications, but doesn’t want them to be able to conspire / correlate that they are the same user.
-Processing:  Design should provide the minimum possible information to the processing components about user identity. 
-Visualization: Visible face of “the app” to the user. 
 
 \subsubsection{Storage in the network}
 \begin{itemize}
+\item Each user may choose a different storage provider, though we may only have one option in the initial implementation
 \item Interaction of personal and shared stores
-\item Data filtering at the repo?
 \item New legal / economic relationship between the players
 \end{itemize}
