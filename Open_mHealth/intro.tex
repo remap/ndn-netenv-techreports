@@ -124,29 +124,24 @@ network environment to both drive and evaluate NDN.
 \begin{itemize}
 \item Locating endpoints to source/sink data.
 \item Key pain point is OAuth 2.0:  Implementation relies on this – doesn’t scale to the DPU model and has numerous problems.  Quickly identified by 
+\item [Others...] 
 \end{itemize}
 
 \subsection{Fit of NDN to Application Domain}
-
+The following ideas about why NDN fits Open mHealth well should be validated through experimentation and directly influence the design goals found later in this document. 
 \begin{itemize}
-\item Like NDN, Open mHealth  focuses on \textbf{named data as the ``thin waist'' of interoperability}. 
-\item \textbf{Data-centric security a good match}, and could be a major improvement over a current pain point – OAuth, in terms of ease of development and overall security.
-\item \textbf{Distributed storage is straightforward to implement on NDN}. Could drive a new data-diffusion focused model for this application. 
-\item \textbf{Reduction in overhead for request-response architecture} should be useful given that many apps are always running on a variety of types of devices. 
+\item Like NDN, Open mHealth  focuses on \textbf{named data as the ``thin waist'' of interoperability}. As discussed above, the Open mHealth architecture focuses on data exchange rather than system interoperability. 
+\item \textbf{Reduction in complexity for request-response architecture} should make interoperability across a wide ecosystem easier, and support low-capability devices directly - given that many apps run on a variety of types of devices. Using NDN rather than IP enables Open mHealth applications to be coded using data naming directly rather than having to create abstractions to translate data names to IP-based hosts providing services.
+\item \textbf{Distributed storage is straightforward to implement on NDN}. Could drive a new data-diffusion focused model for this application.  We will explore how the application's storage architecture can be simplified and map closely to network architecture.  NDN naturally supports distributed storage, which can ease the burden of fault-tolerance and load-balancing in large networks, reducing cost-of-entry and fostering innovation. 
+\item \textbf{Data-centric security requirements of Open mHealth are a good match for NDN}, and could be a major improvement over a current pain point – OAuth, in terms of ease of development and overall security. Because NDN does not rely on perimeter- or channel-based security, it can promote global health data ecosystems rather than previous walled garden approaches, if the ecosystem is designed directly.  In the long term, this shift has direct relevance for opt-in epidemiological studies in public health, by enabling researchers to draw from large populations who have elected to share some data with them. 
 \item \textbf{Intrinsic disruption tolerance and multi-path support} are a good fit for mobile devices if challenges of mobile publishing can be addressed. 
 \end{itemize}
 
-\subsection{Research Objectives} 
-
-{\bf Naming and application design.} The Open mHealth architecture focuses on data exchange rather than system interoperability, which is well-suited for NDN. Using NDN rather than IP enables Open mHealth applications to be coded using data naming directly rather than having to create abstractions to translate data names to IP-based hosts providing services. We will explore how application architecture can be simplified and map closely to network architecture. With its emerging synchronization primitives, NDN will also enhance network support for synchronizing data across multiple devices. 
-
-{\bf Trust and security.} Because NDN does not rely on perimeter- or channel-based security, it will promote global health data ecosystems rather than previous walled garden approaches.   This shift has direct relevance for public health, by enabling research to draw from large populations. 
-
-{\bf Storage in the network.} NDN naturally supports distributed storage, which can ease the burden of fault-tolerance and load-balancing in large networks, reducing cost-of-entry and fostering innovation. 
 
 \subsection{Collaboration}
 
-NDN application collaboration:
+The following team is collaborating on the design and development of this application: 
+
 \begin{itemize}
 \item UCLA REMAP - application design; library support; web-based visualization; values in design.
 \item UCLA IRL - architecture implications; repository; library and forwarder support; trust and security. 
@@ -169,12 +164,14 @@ development process, soliciting regular feedback from the Open mHealth team.
 
 \subsection{Proposed Milestones 2014-2016}
 
+The following milestones were proposed to NSF for this network environment. 
+
 \begin{itemize}
-\item Review limitations in current IP-based architecture for Open mHealth needs. (Y1)
-\item Design namespace, repository, trust and communication model for use cases, e.g., diabetes or PTSD treatment (Y1; updated in Y2)
-\item Repository implementation providing backing storage for prototype applications. (Y1)
-\item Integrate named data networking into the Ohmage mobile data collection framework. (Y2)
-\item Pilot user-facing application using NDN, for beta testing by Open mHealth project team. (Y2)
+\item Review limitations in current IP-based architecture for Open mHealth needs. (Y1) \emph{This review will be incorporated into this document.} 
+\item Design namespace, repository, trust and communication model for use cases, e.g., diabetes or PTSD treatment (Y1; updated in Y2) \emph{The design of the initial NDNEx use case will be included in this document.} 
+\item Repository implementation providing backing storage for prototype applications. (Y1) \emph{The initial repository design will be described in this document.}
+\item Integrate named data networking into the Ohmage mobile data collection framework. (Y2) \emph{Ohmage is a reference application for the NDNEx application described in this document, and we plan to explore this interoperability in 2016.}
+\item Pilot user-facing application using NDN, for beta testing by Open mHealth project team. (Y2) \emph{The primary user-facing application is NDNEx, described in this document.} 
 \end{itemize}
 
 

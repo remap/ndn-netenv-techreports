@@ -19,6 +19,8 @@ See also Deborah's TEDMED talk:
 
 \subsection{Model Applications}
 
+Several existing applications and application frameworks serve as excellent models for the Open mHealth pilot application.  They are briefly reviewed below. 
+
 \subsubsection{Open mHealth}
 Ohmage, etc.
 
@@ -43,10 +45,12 @@ Platform for predictive modeling
 
 \subsection{Previous work by the NDN team}
 
+The primary piece of past work by the NDN team is the \emph{personal data cloud} effort. 
 Within the participatory sensing application area of the previous NDN
 FIA project, we extended the concept of a host-centric ``personal data
 vault'' developed at UCLA and USC~\cite{mun2010personal} to create a
 geographically distributed \emph{personal data cloud (PDC)} using NDN.
+
 This prototype went through three iterations reflecting increasing
 understanding of how to develop applications using NDN.   The first
 version implemented data collections, key management, storage, data
@@ -55,9 +59,8 @@ TCP/IP based applications.  A second revision integrated the PDC
 architecture into a deployed participatory sensing application at the
 Center for Embedded Networked Sensing, called
 Ohmage~\cite{ramanathan2012ohmage}.
-%% It included the development of
-%mappings between the relational data store used for Ohmage and the PDC
-%data collection model. 
+
+
 The most recent revision transitioned to use the
 new Sync primitive for transferring content between entities, and removes
 much of the session-like semantics initially

@@ -1,20 +1,43 @@
 \section{Design of NDNEx}
 
+Fundamentally, NDNEx should follow the Open mHealth paradigm, but adapting its REST-based communication model to a data dissemination approach using NDN. The application must be constructed from an ecosystem with each type of component envisioned by the Open mHealth team, including
+1) data capture, 2) secure storage, 3) modeling and analytics, and 4) user
+interface components to create a modular, layered sense-making framework. Each component could be provided by  different service providers at different stages in the processing chain, rather than a siloed application.
+
+The design should rely as much as possible on basic NDN primitives (hierarchical naming, interest/data exchange, sync, repositories, keys-as-data, etc.) as possible, rather than designing new protocols.    Given that Open mHealth already envisions a data-centric thin waist in their ecosystem, NDN provides much more relevant functionality at the network layer than IP.   So basic solutions in NDN have much more direct impact on the scalability, security, and ease of development; we need not build up additional layers on IP to get near the app challenges.
+
+The application architecture should be consistent with the discussion above and incorporate reasonable knowledge of the ``cutting-edge'' of  participatory sensing projects (e.g., Mun et al, 2009) and related work in the commercial sector.
+
+The basis for design for all components should include the following: 
+
 \paragraph{Basis for Design}
 \begin{itemize}
+\item Review of \textbf{NDN research goals and related requirements} as described above. 
 \item Review and evaluation of Ohmage reference application and open mHealth schema.
 \item Review high level motivation of Estrin \& Sim, 2010 and other references above. 
 \item Review case studies, including those on Ohmage website and in the Appendices. 
-\item Review Past CENS/UCLA participatory sensing research in activity classification,self-surveillance privacy, mobile phone based data collection.
+\item Review past CENS/UCLA participatory sensing research in activity classification,self-surveillance privacy, mobile phone based data collection.
 \end{itemize}
 
-\paragraph{Design Goals} 
+\paragraph{Areas of concern} 
+NDNEx requires specific design of the following, as an example of the Open mHealth network environment.  
+\begin{itemize}
+\item Namespace / schema 
+\item Repository / storage 
+\item Service composability
+\item Authentication / identity assurance
+\item Data provenance
+\item Access auditing
+\item Mobile publishing
+\item Legal requirements for success
+\end{itemize}
 
+
+\paragraph{Design Goals} 
 \begin{itemize}
 \item \textbf{Interoperable, Internet-inspired data exchange} as the backbone of the application ecosystem. 
 \item \textbf{Thin waist of open data interchange standards} that will enable an ecosystem of sensing, storage, analysis, and user interface components to support medical discovery and evidence-based care 
-\item Market-supported, patient-centered landscape of innovative health applications
-\item \textbf{Patient-controlled, privacy-aware data exchange} across device, component, and application boundaries
+\item \textbf{User-centric, privacy-aware data exchange} across device, component, and application boundaries
 \item Imported from Open mHealth:
     \begin{itemize}
     \item Data-centric rather than service-centric interoperability. $\Rightarrow$ \textbf{Focus on data namespace design.}
@@ -31,32 +54,86 @@
     \item OAuth authentication $\Rightarrow$ Need new identity / authentication approach. 
     \item Single storage ``location'' $\Rightarrow$ \textbf{Distributed, ``personal'' repositories}. 
     \end{itemize}
+\item \textbf{mHealth Reality Check}. Finally, each component developer should consider the following ``reality check'' questions (and their implicit design goals) for all mHealth applications.\footnote{From the PLOS Medicine Editors. "A reality checkpoint for mobile health: three challenges to overcome." PLoS Medicine 10.2 (2013).}
+    %% TODO: Add to cites
+    \begin{itemize}
+    \item \textbf{Are your systems interoperable?}
+    Estrin \& Sim in Science, 2010.  Open mHealth. 
+    \item \textbf{Are you using open standards?}
+    WHO, 2013.  eHealth unit. 
+    \item \textbf{How will you evaluate?}
+    Greenhalgh et al. in BMC Med Res. Methodology, 2011.
+    Realist and meta-narrative evidence synthesis.
+    \end{itemize}
+
 \end{itemize} 
 
-\paragraph{mHealth Reality Check}
-A reality check for all mHealth applications, from the PLOS Medicine Editors. "A reality checkpoint for mobile health: three challenges to overcome." PLoS Medicine 10.2 (2013).
-%% TODO: Add to cites
+\subsection{Specific Requirements}
+
+
+%% Repeated from above.
+\subsubsection{Naming} 
+Our research objective is to see how well basic NDN primitives, such as Interest-Data exchange and Sync, can support the application, proposing new primitives and/or designing new application-level approaches where needed. 
 \begin{itemize}
-\item \textbf{Are your systems interoperable?}
-Estrin \& Sim in Science, 2010.  Open mHealth. 
-\item \textbf{Are you using open standards?}
-WHO, 2013.  eHealth unit. 
-\item \textbf{How will you evaluate?}
-Greenhalgh et al. in BMC Med Res. Methodology, 2011.
-Realist and meta-narrative evidence synthesis.
+\item \textbf{Namespace design and data payload format should be adapted as directly and consistently as possible from the Open mHealth reference platform and schema library.} 
+\item Basic Interest-Data exchange and Sync should be used wherever possible, for example:
+\begin{itemize}
+\item Consumers should be able to easily access raw and processed data for a certain time period by issuing simple Interests for the appropriate names.
+\item Consumers should be able to efficiently read data sequentially, also by issuing simple Interests for the appropriate names. 
+\end{itemize}
+\item The approach to distributed processing should adapt the Named Function Networking concept for distributed processing (Open mHealth Data Processing Units (DPUs). 
+\item Data will include:
+    \begin{itemize}
+    \item Raw time-location data (GPS, accelerometer) from mobiles. 
+    \item Successive rounds of processing that, for example:  
+        \begin{itemize}
+        \item Generate classified activity data that follows the Physical Activity JSON schema and perhaps other related schemas.  (This happens at client-side in Ohmage Mobility but could happen at a DPU.)	
+        \item Identify / segment ``boutsÓ''of physical activity or exercise. 
+        \item Add features to a bout from DPUs to the existing store. 
+        \end{itemize}
+    \item End-user configuration information
+    \item Identity and trust related data
+    \end{itemize}
+\end{itemize} 
+
+\subsubsection{Trust and security}
+
+Our research objective is to see how well the NDN architectural mechanisms fit into security requirements, and propose new ones where necessary. 
+\begin{itemize}
+\item Critically, the application's approach to \textbf{identity and trust management} scenario should emerge from the notion of NDNEx as consisting of interoperating components in an ecosystem, not a silo'd application. 
+\item All data payloads should be encrypted.  
+\item Name encryption should be explored as an advanced feature in this application. 
+\item The ecosystem must provide granular access control over various components of the data namespace Ð in particular, raw location data.  
+\item Doing better than Oauth2 for securing distributed processing is important. 
+\item Use passive key publication approach (rather than active broker services) if possible, though  tradeoffs between the two solutions should be explored.  
+\item If possible, we should support different identities relative each part of the system: collection, processing, and visualization, such as:
+    \begin{itemize}
+    \item Collection: User may publish data to serve multiple applications, but doesnÕt want them to be able to conspire / correlate that they are the same user.
+    \item Processing:  Design should provide the minimum possible information to the processing components about user identity. 
+    \item Visualization: Visible face of Òthe appÓ to the user. 
+    \end{itemize}
+\end{itemize}
+
+\subsubsection{Storage in the network}
+
+Our research objective is to design one or more repository implementations that support application-specific requirements while preserving as many basic NDN conventions (e.g., versioning, segmenting, etc.) as possible. 
+
+\begin{itemize}
+\item NDN-enabled ``repos'' should be used wherever persistent storage is needed in the application, including: 1) storage of sensed data on the mobile capture device; 2) a ``cloud-based'' (or home) personal data repository; 3) temporary storage for processing blocks. 
+\item Each user may choose a different storage provider, though we may only have one option in the initial implementation
+\item Repos must support encryption-based access control.
+\item New legal / economic relationship between the players
 \end{itemize}
 
 \subsection{NDNEx Ecosystem components}
 
 First, we introduce the components of the NDNEx application ecosystem, then we discuss overall design strategies for trust, naming, etc. 
 
-We use Ohmage client and server as references applications, and a conceptual design based on  
-PEIR, the personal environmental impact report, as a platform for participatory sensing systems research. Mun, M., Reddy, S., Shilton, K., Yau, N., Burke, J., Estrin, D., ... \& Boda, P. (2009, June). Proc. ACM Mobisys 2009. 
-
-User interacts with three pieces:
+The NDNEx user interacts with at least four pieces:
 \begin{itemize}
 \item Mobile capture application
 \item Website for visualization / review
+\item Personal data repository service
 \item Identity manager (newly envisioned mobile component)
 \end{itemize}
 
@@ -67,6 +144,7 @@ User interacts with three pieces:
 \label{fig:ndnex-ecosystem}
 \end{center}
 \end{figure}
+
 
 %%%%%%%%%%%%%%
 
@@ -167,7 +245,7 @@ DPUs are stateless modules that input and output data. They are designed to be e
 
 Names serve to access and invoke functions, which incidentally can produce passive content once it is needed. New questions arise from this point of view, namely how the network organizes the flow of functions, which brings us squarely into active networking turf. 
 
-\subsubsection{Content Source: Trails Database}
+\paragraph{Content Source: Trails Database}
 
 \url{http://archinect.com/news/article/111897927/tour-los-angeles-history-with-ucla-s-new-interactive-urban-trail-app}
 
@@ -211,67 +289,7 @@ The web frontend (powered by the ohmage project) is used to provide students sec
 \paragraph{Responsible team members}
 UCLA IRL (Yingdi)? and REMAP (Dustin)?
   
-%%%%%%%%%%%%%%
-  
-\subsection{Trust and security}
-
-\paragraph{Responsible team members}
-U. Michigan, UCLA IRL, UCLA REMAP
-
-Replacing Oauth2 for distributed processing is critical
-One
-entity (here, the `` user") maintains multiple publishers whose data are
-consumed by many services with varying levels of access based on the: type
-of data (as expressed in the name), level of granularity, and date/time
-when the data was produced. ABE seems a good fit here, is it viable for
-practical experimentation or do we need a directory-of-symmetric-keys or
-some other approach?  If not ABE, where should we begin for our approach?
-Are there existing best practices?
-
-
-\subsubsection{Trust model} 
-Leverage PKI as deployed
-Would like to start from the same tools being used for user/gateway trust management in NDN testbed for this application.  
-How to take advantage of the NDN signing infrastructure?
-Certificates and delegation of authority.
-
-\subsubsection{Identity}
-Each processing block in this diagram may come from a different service provider. 
-User may have different identity per service (or at least per flow). 
-Each step tends to generate derived data that must also be stored and may not be associated with the original identity.  
-
-We are exploring the idea of an ``identity manager", an application
-manages the certificates (identities) that an individual uses to interact
-with the various services involved in this application. Are there good
-examples of \emph{user interfaces} for identity management already?  In fact,
-pointers to state-of-the-art in end-user interfaces for security decision
-making would be helpful. Alex doesn't think there are many. 
-
-\subsubsection{Integrity} 
-
-\subsubsection{Confidentiality}
-
-Principal of minimum information. 
-
-Access control in "data flow" model for communication between processing components, replacing Oauth (with Tsinghua and UCLA).  Extensions to support epidemiological studies incorporating semi-anonymized opt-in data across large populations. 
-
-We will need to come up with an approach for name encryption for
-this environment, in a way that still enables applications to operate on
-the namespace--perhaps without having to be concerned with
-decryption--once it has been decrypted and/or de-encapsulated.
-
-
-\subsubsection{Data flow model support}
-We imagine a data flow like model for this system:
-[Publisher]->[Processing]->[Processing]->[Visualization], with each []
-block being owned by a different entity and an objective to leak the
-minimum amount of context to the processing components.  I'm not sure we
-understand how to handle authentication /  access control of the
-intermediate processing blocks, to each other and to the source/sink of
-the data.  Where can we look for best practices for security in current
-data flow architectures?
-
-%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%
   
 \subsection{Naming}
 
@@ -308,6 +326,76 @@ Borrow ideas from Named Function Networking concept for distributed processing
 
 %%%%%%%%%%%%%%
   
+\subsection{Trust and security}
+
+\paragraph{Responsible team members}
+U. Michigan, UCLA IRL, UCLA REMAP
+
+\subsubsection{Trust model} 
+
+In this application, the user should be the root of trust for their own data, though this may be enabled
+by various service providers. 
+
+If possible, we would like to leverage the existing PKI/SPKI support in NDN, and take advantage of the
+existing infrastructure.  \emph{However}, certificates used should not leak real world identity 
+information except by the choice of the user. 
+
+One entity (here, the `` user") maintains multiple publishers whose data are
+consumed by many services with varying levels of access based on the: type
+of data (as expressed in the name), level of granularity, and date/time
+when the data was produced. ABE seems a good fit here, is it viable for
+practical experimentation or do we need a directory-of-symmetric-keys or
+some other approach?  If not ABE, where should we begin for our approach?
+Are there existing best practices?
+
+\subsubsection{Identity}
+
+Users may have different identities per service (or at least per flow). 
+
+We are exploring the idea of an ``identity manager", an application
+manages the certificates (identities) that an individual uses to interact
+with the various services involved in this application. Are there good
+examples of \emph{user interfaces} for identity management already?  In fact,
+pointers to state-of-the-art in end-user interfaces for security decision
+making would be helpful. Alex doesn't think there are many. 
+
+Each step in the data processing model tends to generate derived data that must also be stored and 
+may or may not be associated with the original identity.  
+
+\subsubsection{Integrity} 
+
+\subsubsection{Confidentiality}
+
+Principal of minimum information:  services should only request / consume the minimum 
+amount of information needed to complete their application. 
+
+We will need to come up with an approach for name encryption for
+this environment, in a way that still enables applications to operate on
+the namespace--perhaps without having to be concerned with
+decryption--once it has been decrypted and/or de-encapsulated.
+
+Public access should be considered but is primarily for future access. 
+Extensions to support epidemiological studies incorporating semi-anonymized opt-in data across large populations. 
+
+
+\subsubsection{Data flow model support}
+
+Must consider access control for services 
+in "data flow" model for communication between processing components, replacing Oauth. 
+
+We imagine a data flow like model for this system:
+[Publisher]->[Processing]->[Processing]->[Visualization], with each []
+block being owned by a different entity and an objective to leak the
+minimum amount of context to the processing components.  I'm not sure we
+understand how to handle authentication /  access control of the
+intermediate processing blocks, to each other and to the source/sink of
+the data.  Where can we look for best practices for security in current
+data flow architectures?
+
+%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%
+  
 \subsection{Storage}
 
 \paragraph{Responsible team members}
@@ -317,7 +405,7 @@ A distributed network of repos replaces the ecosystem of DSUs envisioned in the 
 
 (Hierarchical network of repositories, similar to BAS/BMS, including both personal repositories, service provider backups for personal data, and aggregated "anonymized" stores). 
 
-Write access control
+Need to provide write access control
 
 A mechanism for delegating authority to publish into a repository is
 necessary. 
