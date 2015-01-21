@@ -107,14 +107,38 @@ Should we mention the idea of APL/ACL here?
 \subsection{Naming}
 \subsubsection{Data}
 
-Discover
-Design focuses on the actual deployment
-Data sources \& sinks:  sensors, actuators.
-Physical space / location will be involved in trust and should be described consistently and considered along with routing / application implications.
-Approach to naming/retrieving sample batches. 
-Approach to metadata describing sensor feeds. 
 
-Hierarchical data names and simple sensor/control abstraction.
+In BMS protocols such as BACnet, it is common to name devices to reflect their physical location.
+We follow this convention for data naming in NDN-BMS and constructs the namespace based on the hierarchy in the building structure.   
+For example, the building (identified by its real-world name or label) may be (optionally) partitioned into \emph{floors} (identified by the floor number) first, and then by \emph{rooms} (identified by the room number). 
+Devices may be further grouped by the physical attachment (e.g., different panels) and/or the functionality (e.g., power, voltage, temperature, etc.). Critically, the namespace schema for a given BMS can, to a large extent, remain at the discretion of those who install and manage the system. For example, in our prototype we name \textit{data} rather than the \textit{devices} that collect it, but could use devices names instead or in addition. 
+
+Similarly, operators can choose the scope or granularity of responsibility for a given gateway.
+In the example of Figure~\ref{design:ns}, we have one gateway that covers the entire Strathmore building, while another gateway is only responsible for a single studio in Melnitz Hall.
+Finer granularity reduces the load of a single gateway device but can increase management complexity.
+Note that it is straightforward to configure a gateway to publish in a certain part of the hierarchy - it just registers the appropriate prefix with its upstream hub, a process that is out of scope for this paper but a straightforward part of the architecture, and then publishes data under that prefix. 
+
+\begin{figure}[!ht]
+\centering
+\includegraphics[width=0.8\textwidth, keepaspectratio=true]{figures/bms-namespace-new.pdf}
+\caption{Example NDN-BMS namespace design for the prototype deployment at UCLA.}
+\label{design:ns}
+\end{figure}
+
+Figure~\ref{design:ns} shows the NDN-BMS namespace used by the UCLA campus testbed.
+The root node represents the common prefix for UCLA BMS namespace (\url{/ndn/ucla.edu/bms}).
+The NDN name of a sensor data packets (e.g., \url{/ndn/ucla.edu/bms/building/melnitz/studio/1/data/panel/J/voltage/<timestamp>} in Figure~\ref{design:ns}) indicates the physical location of the sensor (Panel J inside Studio 1, Melnitz Hall), the type of data (voltage) and the time when the data is acquired, expressed as a timestamp in the last component of the name.
+If the data packet contains aggregated data (i.e., a series of data points generated within a given time window), the timestamp reflects the generation time of the first data point in the series. 
+The timestamp-based versioning allows BMS users to fetch sensor data within any time range once the data is archived in the repo.
+
+% Discover
+% Design focuses on the actual deployment
+% Data sources \& sinks:  sensors, actuators.
+% Physical space / location will be involved in trust and should be described consistently and considered along with routing / application implications.
+% Approach to naming/retrieving sample batches. 
+% Approach to metadata describing sensor feeds. 
+
+% Hierarchical data names and simple sensor/control abstraction.
 See also: 
 
 Dawson-Haggerty, Stephen, et al. "Enabling green building applications." Proceedings of the 6th Workshop on Hot Topics in Embedded Networked Sensors. ACM, 2010.
