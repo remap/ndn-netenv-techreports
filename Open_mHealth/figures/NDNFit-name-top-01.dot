@@ -5,25 +5,31 @@ node [shape=box];
 physical_activity_samples [label="physical_activity"];
 physical_activity_auth [label="physical_activity"];
 
-user_root -- ndnfit; 
+"dsu_root/user_root" -- ndnfit; 
 ndnfit -- samples -- physical_activity_samples; 
-ndnfit -- authorizations -- physical_activity_auth;
+ndnfit -- auth -- physical_activity_auth;
+ndnfit -- identity;
 ndnfit -- config -- config_ellipses;
 config_ellipses [shape=plaintext,label="..."];
-ndnfit -- query_cache -- query_ellipses;
-query_ellipses [shape=plaintext,label="..."];
-ndnfit -- cert -- publisher -- physical_activity_cert -- user_cert;
-cert -- app -- ndnfit_viz -- user_cert_2;
+
+
+identity -- publisher -- physical_activity_cert -- physical_activity_cert_version-- user_cert;
+identity -- ndnfit_viz -- ndnfit_viz_cert_version -- user_cert_2;
 physical_activity_cert [label="physical_activity"];
+physical_activity_cert_version [label="<version>"];
+ndnfit_viz_cert_version [label="<version>"];
 user_cert [shape=note, label="DATA\nuser cert\n(publisher)"];
 user_cert_2 [shape=note, label="DATA\nuser cert\n(visualizer)"];
 
-physical_activity_auth -- <<reader_token>> -- auth_version_reader -- auth_data_reader; 
-physical_activity_auth -- <<publisher_index>> -- auth_version_publisher -- auth_data_publisher;
-auth_data_publisher [shape=note, label="ENCRYPTED DATA\n decryption key"]; 
+physical_activity_auth -- auth_raw -- auth_location -- auth_start_timestamp -- auth_end_timestamp -- READ --  <<key_fingerprint>> -- auth_data_reader; 
+
+auth_raw [label="raw"];
+auth_location [label="location"]; 
+auth_start_timestamp [label="<start_timestamp>"];
+auth_end_timestamp [label="<end_timestamp>"];
+
+
 auth_data_reader [shape=note, label="ENCRYPTED DATA\n decryption key"]; 
-auth_version_reader [label="<version>"];
-auth_version_publisher [label="<version>"];
 
 
 physical_activity_samples -- raw -- location -- raw_start_timestamp -- raw_end_timestamp -- raw_data; 
@@ -32,16 +38,16 @@ raw_end_timestamp [label="<end_timestamp>"];
 raw_data [shape="note", label="SEGMENTED,\nENCRYPTED DATA\ntime-location record\n(JSON)"];
 
 physical_activity_samples -- classified;
-classified -- <<segment_index>> -- <<activity_name>>; 
+classified -- bout -- <<sequence_index>> -- <<activity_name>>; 
 <<activity_name>> -- activity_start_timestamp -- activity_end_timestamp -- classified_data;
 activity_start_timestamp [label="<start_timestamp>"];
 activity_end_timestamp [label="<end_timestamp>"];
 classified_data [shape="note", label="SEGMENTED,\nENCRYPTED DATA\nactivity record\n(JSON)"];
 
-classified -- classified_start_timestamp -- classified__end_timestamp -- classified_time_lookup; 
+classified -- period -- classified_start_timestamp -- classified__end_timestamp -- classified_time_lookup; 
 classified_start_timestamp [label="<start_timestamp>"];
 classified__end_timestamp [label="<end_timestamp>"];
-classified_time_lookup [shape=note, label="LINK\nclassified/\n<segment_index>"]
+classified_time_lookup [shape=note, label="LINK\nclassified/\n<sequence_index>"]
 
 }
 

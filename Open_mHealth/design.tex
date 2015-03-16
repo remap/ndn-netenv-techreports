@@ -96,6 +96,9 @@ Our research objective is to see how well basic NDN primitives, such as Interest
     \end{itemize}
 \end{itemize} 
 
+
+
+
 \subsubsection{Trust and security}
 
 Our research objective is to see how well the NDN architectural mechanisms fit into security requirements, and propose new ones where necessary. 
@@ -299,17 +302,41 @@ UCLA REMAP, UCLA IRL
 
 \subsubsection{Data}
 Personal health data (and metadata) namespace and repository design Ð focusing on support for physical activity data in the first round.  
-What schema? Initially, try direct mapping of Open mHealth schema to names
-
+What schema? 
 
 \textbf{Basis of design}: Open mHealth Physical Activity data schema\footnote{\url{http://www.openmhealth.org/developers/schemas/#physical-activity} and \url{http://bioportal.bioontology.org/ontologies/SNOMEDCT?p=classes&conceptid=68130003}}, as well as other schemas from Open mHealth as needed. 
 
 \input{physical-activity-schema-json}
 
-How to separate this into namespace and data?
-Figure~\ref{fig:NDNFit-namespace}
+The proposed data namespace is shown in Figure~\ref{fig:NDNFit-namespace}.  Its components are discussed briefly here:
 
-JSON payload. 
+\begin{addmargin}[2em]{0em}
+    \url{dsu_root/user_root/ndnfit}: All data published by the user for the application is under the \url{ndnfit} child of a globally accessible namespace published by the DSU / personal data vault provider \emph{of that user}. Other temporary namespaces may be used for communication but none shall be considered permanent or authoritative.  
+    \begin{addmargin}[2em]{0em}
+        \url{samples/physical_activity}: The \url{samples} namespace holds the data for the ndnfit application, organized with children whose names describe the data type. For data under this hierarchy, the payload type is JSON. (Need to specify encryption details.)
+            \begin{addmargin}[2em]{0em}
+                \url{raw/location}: This namespace holds the raw time-location traces gathered by the user's Ohmage Mobility client. 
+                \begin{addmargin}[2em]{0em}
+                    \url{<start_timestamp>/<end_timestamp>}: A timestamp range is provided in the name space to allow retrieval of specific time ranges for data without having to read the data or an index.
+                \end{addmargin}
+                \url{classified}: Data under this child has been segmented into classified physical activity bouts (e.g., ``walking'') by a DPU and published into the user's ndnfit namespace. (Note this may be done by the Ohmage Mobility client itself in the first version.)                      
+                \begin{addmargin}[2em]{0em}
+                        \url{bout/<sequence_index>/<activity_name>}: The namespace for classified data is organized into sequential bouts of physical activity, such as \url{bout/2091/walking}.  Start and end timestamps are provided in the child name for consistency with raw data. 
+                        \\ \url{period/<start_timestamp>/<end_timestamp>}: This namespace allows interests with simple selectors to be used to easily retrieve a link to the sequence\_index for a given time period. 
+                    \end{addmargin}
+            \end{addmargin} 
+                \url{auth/physical_activity}: The \url{auth} subtree contains signed keys (or key fingerprints?) for authorized applications, and symmetric keys where needed. The child namespace follows the same structure as the \url{samples} namespace. At any point in the hierarchy, verbs such as \url{READ} are introduced as nodes, with keys underneath them signed by an ndnfit user key associated with that hierarchy, such as the child of \url{identity} shown in the Figure.   This authorizes the key to take the action associated with the verb at that level of the data hierarchy or below.  Because it must also provide access to the appropriate symmetric key, READ access is authorized for specific time periods (each potentially signed with a different symmetric key) only; this is shown in the Figure.  \textbf{Important note:} To bootstrap this approach, the authorizing application must be able to trust that the public key it is signing / using to encrypt belongs to the correct service. For now, we assume that these keys can be verified using a hierarchical trust model such as that deployed on the testbed.  (e.g., \url{/edu/ucla/test_dsu}, where \url{test_dsu}'s root key is signed by the UCLA site key.  
+                \\ \url{identity}: This subtree stores the certificates used to identify the user to other applications in the system in various context. 
+            \begin{addmargin}[2em]{0em}
+                \url{publisher/physical_activity}
+                \\ \url{ndnfit_viz}
+            \end{addmargin} 
+        \url{config}
+    \end{addmargin} 
+
+
+\end{addmargin}
+
 
 \begin{figure}
 \begin{center}
