@@ -1,6 +1,6 @@
-\section{Design of NDNEx}
+\section{Design of NDNFit}
 
-Fundamentally, NDNEx should follow the Open mHealth paradigm, but adapting its REST-based communication model to a data dissemination approach using NDN. The application must be constructed from an ecosystem with each type of component envisioned by the Open mHealth team, including
+Fundamentally, NDNFit should follow the Open mHealth paradigm, but adapting its REST-based communication model to a data dissemination approach using NDN. The application must be constructed from an ecosystem with each type of component envisioned by the Open mHealth team, including
 1) data capture, 2) secure storage, 3) modeling and analytics, and 4) user
 interface components to create a modular, layered sense-making framework. Each component could be provided by  different service providers at different stages in the processing chain, rather than a siloed application.
 
@@ -20,7 +20,7 @@ The basis for design for all components should include the following:
 \end{itemize}
 
 \paragraph{Areas of concern} 
-NDNEx requires specific design of the following, as an example of the Open mHealth network environment.  
+NDNFit requires specific design of the following, as an example of the Open mHealth network environment.  
 \begin{itemize}
 \item Namespace / schema 
 \item Repository / storage 
@@ -100,7 +100,7 @@ Our research objective is to see how well basic NDN primitives, such as Interest
 
 Our research objective is to see how well the NDN architectural mechanisms fit into security requirements, and propose new ones where necessary. 
 \begin{itemize}
-\item Critically, the application's approach to \textbf{identity and trust management} scenario should emerge from the notion of NDNEx as consisting of interoperating components in an ecosystem, not a silo'd application. 
+\item Critically, the application's approach to \textbf{identity and trust management} scenario should emerge from the notion of NDNFit as consisting of interoperating components in an ecosystem, not a silo'd application. 
 \item All data payloads should be encrypted.  
 \item Name encryption should be explored as an advanced feature in this application. 
 \item The ecosystem must provide granular access control over various components of the data namespace – in particular, raw location data.  
@@ -125,11 +125,11 @@ Our research objective is to design one or more repository implementations that 
 \item New legal / economic relationship between the players
 \end{itemize}
 
-\subsection{NDNEx Ecosystem components}
+\subsection{NDNFit Ecosystem components}
 
-First, we introduce the components of the NDNEx application ecosystem, then we discuss overall design strategies for trust, naming, etc. 
+First, we introduce the components of the NDNFit application ecosystem, then we discuss overall design strategies for trust, naming, etc. 
 
-The NDNEx user interacts with at least four pieces:
+The NDNFit user interacts with at least four pieces:
 \begin{itemize}
 \item Mobile capture application
 \item Website for visualization / review
@@ -139,9 +139,9 @@ The NDNEx user interacts with at least four pieces:
 
 \begin{figure}
 \begin{center}
-\includegraphics[width=.8\textwidth]{figures/NDNEx-App-Architecture-01}
-\caption{Draft NDNEx ecosystem design.}
-\label{fig:ndnex-ecosystem}
+\includegraphics[width=.8\textwidth]{figures/NDNFit-App-Architecture-01}
+\caption{Draft NDNFit ecosystem design.}
+\label{fig:NDNFit-ecosystem}
 \end{center}
 \end{figure}
 
@@ -164,7 +164,7 @@ Mobile capture application is one of two primary user interfaces.
 
 Initial analysis of Ohmage mobile client communication completed by Prof. Euihyun Jung’s group from Anyang Univ.   
 
-From Basel: Today, we had an internal presentation from the Psychology Dept which explained their use of the Ohmage system that is running in Basel. Although NDNex comes too late for being applied in ongoing projects, these projects are a good source of insights about user requirements for our future NDNex system, especially the aspect of data sovereignty.
+From Basel: Today, we had an internal presentation from the Psychology Dept which explained their use of the Ohmage system that is running in Basel. Although NDNFit comes too late for being applied in ongoing projects, these projects are a good source of insights about user requirements for our future NDNFit system, especially the aspect of data sovereignty.
 
 \paragraph{Building Block: Ohmage \& Mobility}
 
@@ -307,15 +307,15 @@ What schema? Initially, try direct mapping of Open mHealth schema to names
 \input{physical-activity-schema-json}
 
 How to separate this into namespace and data?
-Figure~\ref{fig:ndnex-namespace}
+Figure~\ref{fig:NDNFit-namespace}
 
 JSON payload. 
 
 \begin{figure}
 \begin{center}
-\includegraphics[width=1\textwidth]{figures/ndnex-name-top-01}
-\caption{NDNEx Namespace, version 1.}
-\label{fig:ndnex-namespace}
+\includegraphics[width=1\textwidth]{figures/NDNFit-name-top-01}
+\caption{NDNFit Namespace, version 1.}
+\label{fig:NDNFit-namespace}
 \end{center}
 \end{figure}
 
