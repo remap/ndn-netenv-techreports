@@ -30,61 +30,115 @@ Develop repository design and basic trust approach for offline report generation
 
 \subsection{NDN-EBAMS Application Architecture} 
  
-Cite Wentao's paper for full information on design
+\begin{figure}[!ht]
+\centering
+\includegraphics[width=0.7\textwidth, keepaspectratio=true]{figures/bms-arch.pdf}
+\caption{Major components in NDN-EBAMS, where there are potentially many users and gateways, and multiple devices per gateway.}
+\label{design:arch}
+\end{figure}
+ 
+Figure~\ref{design:arch} shows the initial design of NDN-EBAMS with three main entities: end users, sensor gateway (including the connected devices) and a privileged manager application controlled by human operators who handle out-of-band user authentication and privilege authorization. The manager application is responsible for gateway/device and user management over the NDN network.
+
+
+Gateways insert sensor data into NDN Repositories (repos), which respond to user Interests for data in the sensor namespace. This indirection decouples data generation from user fetching and provides benefits of automatic data archiving, 
+non-interactive access control (described below), and protection from DOS/DDOS attack on gateways. In our initial implementation, a Web interface fetches the data from the repo by issuing Interest packets with proper data prefixes.
+
+A detailed description of the initial architecture can be found at~\cite{secure-ndn-bms-ieee}.
 
   
- \subsection{Trust and security}
+\subsection{Trust and security}
  
 Only focus on read access control. No write access.
 
 Opportunity to compare active services (e.g., broker) with passive. 
 
-\subsubsection{Trust model} 
-Leverage PKI as deployed
-Would like to start from the same tools being used for user/gateway trust management in NDN testbed for this application.  
-How to take advantage of the NDN signing infrastructure?
-Certificates and delegation of authority.
+\subsubsection{Identity}
 
-\subsubsection{Identity} 
+In NDN parlance, the concept of ``identity'' refers to the public key owned by some entity (which could be a device, a person, or an organization).
+Since the keys and certificates are also published as NDN data packets on the network, each identity will receive a unique NDN name.
+The human-readable and hierarchical identity name can express a rich set of trust relationships and makes it easier to specify the trust policies compared to using self-certifying hashes or public key bits.
 
-\subsubsection{Integrity} 
+\subsubsection{Trust model}
+
+The hierarchical structure in the real-world facility management department forms a natural hierarchy of trust, similar to traditional Public Key Infrastructure (PKI).
+In a typical deployment of EBAMS, there is a single root of trust owned by the manager of the entire enterprise.
+The root manager may delegate responsibilities to lower-level managers who have control over a specific department or building by signing their identities.
+The identity of the devices are signed by either the direct managers or other identities further delegated from the managers (such as the identity of a room or device rack).
+
+
+\subsubsection{Integrity}
+
+Each NDN data packet is signed by the publisher's identity.
+The cryptographic signature provides a strong integrity protection.
 
 \subsubsection{Confidentiality}
-Crypto approach.
-Groups: NDN-BmS developers at UCLA, UIUC, departmental/campus stakeholders, and testbed users. 
-Users:  Users possessing a cert in new system, and anonymous users on the web.
-Applications that are not associated with a real-world users but need credentials: aggregators, gateways, background processes, etc. 
 
-There appear to be two important factors to
-consider in controlling access to a specific monitoring point or group of
-points in our pilot: 1) what department it relates to (not necessarily in the name),
-2) what type of data it is (probably in the name).
-Each "point" here corresponds to a source of time-series monitoring data.
-For UCLA, I would expect there are O(100) "departments", with many
-individuals having access for several departments, and O(10) types of
-data, for our purposes.
+Given the nature of EBAMS, data confidentiality is often an essential requirement.
+In NDN-EBAMS, confidentiality and access control is achieved through data encryption and controlling the distribution of the encryption key.
+The EBAMS data may be accessed by a large number of users with different types of privileges.
+For example, enterprise employees may have limited access to the data according to the place they work in or the department they belong to, while the utility companies may have external access to only a certain type of data (such as electricity) across the entire campus.
+The challenge is to design a efficient and flexible key distribution scheme that can scale to a large number of users and satisfy the diversified privilege requirements.
 
-What is the appropriate practical crypto scheme to develop access control
-based on these dimensions?  I really like the concept of ABE, as long as
-there is some ability to deploy it practically, because it would enable us
-to define sensible *named* attributes that correspond directly to
-department and data type. A relationship between attribute names and data
-names (for key data, etc.) might be useful to simplify things at the
-application level.
+Should we mention the idea of APL/ACL here?
+
+% Groups: NDN-BmS developers at UCLA, UIUC, departmental/campus stakeholders, and testbed users. 
+% Users:  Users possessing a cert in new system, and anonymous users on the web.
+% Applications that are not associated with a real-world users but need credentials: aggregators, gateways, background processes, etc. 
+
+% There appear to be two important factors to
+% consider in controlling access to a specific monitoring point or group of
+% points in our pilot: 1) what department it relates to (not necessarily in the name),
+% 2) what type of data it is (probably in the name).
+% Each "point" here corresponds to a source of time-series monitoring data.
+% For UCLA, I would expect there are O(100) "departments", with many
+% individuals having access for several departments, and O(10) types of
+% data, for our purposes.
+
+% What is the appropriate practical crypto scheme to develop access control
+% based on these dimensions?  I really like the concept of ABE, as long as
+% there is some ability to deploy it practically, because it would enable us
+% to define sensible *named* attributes that correspond directly to
+% department and data type. A relationship between attribute names and data
+% names (for key data, etc.) might be useful to simplify things at the
+% application level.
 
 
 
 \subsection{Naming}
 \subsubsection{Data}
 
-Discover
-Design focuses on the actual deployment
-Data sources \& sinks:  sensors, actuators.
-Physical space / location will be involved in trust and should be described consistently and considered along with routing / application implications.
-Approach to naming/retrieving sample batches. 
-Approach to metadata describing sensor feeds. 
 
-Hierarchical data names and simple sensor/control abstraction.
+In BMS protocols such as BACnet, it is common to name devices to reflect their physical location.
+We follow this convention for data naming in NDN-BMS and constructs the namespace based on the hierarchy in the building structure.   
+For example, the building (identified by its real-world name or label) may be (optionally) partitioned into \emph{floors} (identified by the floor number) first, and then by \emph{rooms} (identified by the room number). 
+Devices may be further grouped by the physical attachment (e.g., different panels) and/or the functionality (e.g., power, voltage, temperature, etc.). Critically, the namespace schema for a given BMS can, to a large extent, remain at the discretion of those who install and manage the system. For example, in our prototype we name \textit{data} rather than the \textit{devices} that collect it, but could use devices names instead or in addition. 
+
+Similarly, operators can choose the scope or granularity of responsibility for a given gateway.
+In the example of Figure~\ref{design:ns}, we have one gateway that covers the entire Strathmore building, while another gateway is only responsible for a single studio in Melnitz Hall.
+Finer granularity reduces the load of a single gateway device but can increase management complexity.
+Note that it is straightforward to configure a gateway to publish in a certain part of the hierarchy - it just registers the appropriate prefix with its upstream hub, a process that is out of scope for this paper but a straightforward part of the architecture, and then publishes data under that prefix. 
+
+\begin{figure}[!ht]
+\centering
+\includegraphics[width=0.8\textwidth, keepaspectratio=true]{figures/bms-namespace-new.pdf}
+\caption{Example NDN-BMS namespace design for the prototype deployment at UCLA.}
+\label{design:ns}
+\end{figure}
+
+Figure~\ref{design:ns} shows the NDN-BMS namespace used by the UCLA campus testbed.
+The root node represents the common prefix for UCLA BMS namespace (\url{/ndn/ucla.edu/bms}).
+The NDN name of a sensor data packets (e.g., \url{/ndn/ucla.edu/bms/building/melnitz/studio/1/data/panel/J/voltage/<timestamp>} in Figure~\ref{design:ns}) indicates the physical location of the sensor (Panel J inside Studio 1, Melnitz Hall), the type of data (voltage) and the time when the data is acquired, expressed as a timestamp in the last component of the name.
+If the data packet contains aggregated data (i.e., a series of data points generated within a given time window), the timestamp reflects the generation time of the first data point in the series. 
+The timestamp-based versioning allows BMS users to fetch sensor data within any time range once the data is archived in the repo.
+
+% Discover
+% Design focuses on the actual deployment
+% Data sources \& sinks:  sensors, actuators.
+% Physical space / location will be involved in trust and should be described consistently and considered along with routing / application implications.
+% Approach to naming/retrieving sample batches. 
+% Approach to metadata describing sensor feeds. 
+
+% Hierarchical data names and simple sensor/control abstraction.
 See also: 
 
 Dawson-Haggerty, Stephen, et al. "Enabling green building applications." Proceedings of the 6th Workshop on Hot Topics in Embedded Networked Sensors. ACM, 2010.
