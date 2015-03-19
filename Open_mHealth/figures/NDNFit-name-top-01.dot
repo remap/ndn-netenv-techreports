@@ -2,15 +2,22 @@ graph top {
 
 node [shape=box]; 
 
-physical_activity_samples [label="physical_activity"];
-physical_activity_auth [label="physical_activity"];
 
-"dsu_root/user_root" -- ndnfit; 
-ndnfit -- samples -- physical_activity_samples; 
-ndnfit -- auth -- physical_activity_auth;
-ndnfit -- identity;
-ndnfit -- config -- config_ellipses;
-config_ellipses [shape=plaintext,label="..."];
+"org/openmhealth" -- <<user_id>>; 
+<<user_id>> -- category_ellipses;
+<<user_id>> -- wellness;
+<<user_id>> -- clinical;
+
+
+category_ellipses [shape=plaintext,label="..."];
+
+wellness -- samples;
+wellness -- auth;
+"??" -- identity;
+
+wellness -- config;
+config -- sync_partners -- sync_partners_ellipses; 
+sync_partners_ellipses [shape=plaintext,label="..."];
 
 
 identity -- publisher -- physical_activity_cert -- physical_activity_cert_version-- user_cert;
@@ -21,33 +28,37 @@ ndnfit_viz_cert_version [label="<version>"];
 user_cert [shape=note, label="DATA\nuser cert\n(publisher)"];
 user_cert_2 [shape=note, label="DATA\nuser cert\n(visualizer)"];
 
-physical_activity_auth -- auth_raw -- auth_location -- auth_start_timestamp -- auth_end_timestamp -- READ --  <<key_fingerprint>> -- auth_data_reader; 
+
+physical_activity_auth [label="physical_activity"];
+
+auth -- physical_activity_auth -- auth_raw -- auth_location -- auth_start_timestamp  -- READ --  <<key_fingerprint>> -- auth_data_reader; 
+
+auth_start_timestamp -- WRITE;
+auth_start_timestamp -- "...";
 
 auth_raw [label="raw"];
 auth_location [label="location"]; 
 auth_start_timestamp [label="<start_timestamp>"];
-auth_end_timestamp [label="<end_timestamp>"];
 
 
 auth_data_reader [shape=note, label="ENCRYPTED DATA\n decryption key"]; 
 
-
-physical_activity_samples -- raw -- location -- raw_start_timestamp -- raw_end_timestamp -- raw_data; 
+samples -- physical_activity -- raw -- location -- raw_start_timestamp -- raw_end_timestamp -- raw_data; 
 raw_start_timestamp [label="<start_timestamp>"]; 
-raw_end_timestamp [label="<end_timestamp>"]; 
+raw_end_timestamp [label="<duration>"]; 
 raw_data [shape="note", label="SEGMENTED,\nENCRYPTED DATA\ntime-location record\n(JSON)"];
 
-physical_activity_samples -- classified;
-classified -- bout -- <<sequence_index>> -- <<activity_name>>; 
-<<activity_name>> -- activity_start_timestamp -- activity_end_timestamp -- classified_data;
+physical_activity -- sliced;
+sliced -- bout -- <<sequence_index>> -- <<activity_class>>; 
+<<activity_class>> -- activity_start_timestamp -- activity_end_timestamp -- sliced_data;
 activity_start_timestamp [label="<start_timestamp>"];
-activity_end_timestamp [label="<end_timestamp>"];
-classified_data [shape="note", label="SEGMENTED,\nENCRYPTED DATA\nactivity record\n(JSON)"];
+activity_end_timestamp [label="<duration>"];
+sliced_data [shape="note", label="SEGMENTED,\nENCRYPTED DATA\nactivity record\n(JSON)"];
 
-classified -- period -- classified_start_timestamp -- classified__end_timestamp -- classified_time_lookup; 
-classified_start_timestamp [label="<start_timestamp>"];
-classified__end_timestamp [label="<end_timestamp>"];
-classified_time_lookup [shape=note, label="LINK\nclassified/\n<sequence_index>"]
+sliced -- period -- sliced_start_timestamp -- sliced__end_timestamp -- sliced_time_lookup; 
+sliced_start_timestamp [label="<start_timestamp>"];
+sliced__end_timestamp [label="<duration>"];
+sliced_time_lookup [shape=note, label="LINK\nsliced/\n<sequence_index>"]
 
 }
 
