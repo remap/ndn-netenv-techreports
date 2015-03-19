@@ -3,16 +3,17 @@ graph top {
 node [shape=box]; 
 
 
-"org/openmhealth" -- <<user_id>>; 
+root -- <<user_id>>; 
 <<user_id>> -- category_ellipses;
 <<user_id>> -- wellness;
 <<user_id>> -- clinical;
 
+root [shape=oval, label="org/openmhealth\n(nonroutable)", width=3];
 
 category_ellipses [shape=plaintext,label="..."];
 
-wellness -- samples;
 wellness -- auth;
+wellness -- samples;
 "??" -- identity;
 
 wellness -- config;
@@ -31,19 +32,21 @@ user_cert_2 [shape=note, label="DATA\nuser cert\n(visualizer)"];
 
 physical_activity_auth [label="physical_activity"];
 
-auth -- physical_activity_auth -- auth_raw -- auth_location -- auth_start_timestamp  -- READ --  <<key_fingerprint>> -- auth_data_reader; 
+auth -- physical_activity_auth -- auth_start_timestamp -- auth_end_timestamp -- auth_raw -- auth_location -- READ --  <<key_fingerprint>> -- auth_data_reader; 
 
-auth_start_timestamp -- WRITE;
-auth_start_timestamp -- "...";
+auth_location -- WRITE;
+auth_location -- "...";
 
 auth_raw [label="raw"];
 auth_location [label="location"]; 
 auth_start_timestamp [label="<start_timestamp>"];
 
+auth_start_timestamp [label="<duration>"];
+
 
 auth_data_reader [shape=note, label="ENCRYPTED DATA\n decryption key"]; 
 
-samples -- physical_activity -- raw -- location -- raw_start_timestamp -- raw_end_timestamp -- raw_data; 
+samples -- physical_activity -- raw_start_timestamp -- raw_end_timestamp -- raw -- location -- raw_data; 
 raw_start_timestamp [label="<start_timestamp>"]; 
 raw_end_timestamp [label="<duration>"]; 
 raw_data [shape="note", label="SEGMENTED,\nENCRYPTED DATA\ntime-location record\n(JSON)"];
