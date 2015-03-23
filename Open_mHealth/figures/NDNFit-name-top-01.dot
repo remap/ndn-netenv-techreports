@@ -2,22 +2,35 @@ graph top {
 
 node [shape=box]; 
 
+exampledsu -- dsu_sync_rendezvous -- dsu_rendezvous_name -- dsu_user;
+exampledsu [shape=oval, label="com/foo/healthdsu\n(routable)", width=3];
+dsu_sync_rendezvous [label="sync_rendezvous"];
+dsu_rendezvous_name [label="org/openmhealth"];
+dsu_user [label="<user_id>"];  
+
+exampledvu -- dvu_sync_rendezvous -- dvu_rendezvous_name -- dvu_user;
+exampledvu [shape=oval, label="org/bar/ndnfitdvu\n(routable)", width=3];
+dvu_sync_rendezvous [label="sync_rendezvous"];
+dvu_rendezvous_name [label="org/openmhealth"];
+dvu_user [label="<user_id>"];  
+
 
 root -- <<user_id>>; 
 <<user_id>> -- category_ellipses;
-<<user_id>> -- wellness;
+<<user_id>> -- fitness;
 <<user_id>> -- clinical;
 
-root [shape=oval, label="org/openmhealth\n(nonroutable)", width=3];
+root [shape=oval, label="org/openmhealth\n(topology-independent)", width=3];
 
 category_ellipses [shape=plaintext,label="..."];
 
-wellness -- auth;
-wellness -- samples;
+fitness -- auth;
+fitness -- samples;
 "??" -- identity;
 
-wellness -- config;
-config -- sync_partners -- sync_partners_ellipses; 
+fitness -- config;
+config -- sync_partners -- "com/foo/healthdsu"; 
+sync_partners -- sync_partners_ellipses; 
 sync_partners_ellipses [shape=plaintext,label="..."];
 
 
@@ -32,36 +45,38 @@ user_cert_2 [shape=note, label="DATA\nuser cert\n(visualizer)"];
 
 physical_activity_auth [label="physical_activity"];
 
-auth -- physical_activity_auth -- auth_start_timestamp -- auth_end_timestamp -- auth_raw -- auth_location -- READ --  <<key_fingerprint>> -- auth_data_reader; 
+auth -- physical_activity_auth -- auth_start_timestamp -- auth_end_timestamp -- auth_raw -- auth_location -- READ --  read_key_fingerprint -- auth_data_reader; 
+read_key_fingerprint [label="<key_fingerprint>"]; 
 
-auth_location -- WRITE;
-auth_location -- "...";
-
-auth_raw [label="raw"];
+auth_raw [label="raw\n(e.g., by mobile)"];
 auth_location [label="location"]; 
 auth_start_timestamp [label="<start_timestamp>"];
-
-auth_start_timestamp [label="<duration>"];
-
-
+auth_end_timestamp [label="<duration>"];
 auth_data_reader [shape=note, label="ENCRYPTED DATA\n decryption key"]; 
+
+
+auth_location -- WRITE;
+WRITE -- write_key_fingerprint; 
+auth_location -- "...";
+write_key_fingerprint [label="<key_fingerprint>"]; 
+
+
 
 samples -- physical_activity -- raw_start_timestamp -- raw_end_timestamp -- raw -- location -- raw_data; 
 raw_start_timestamp [label="<start_timestamp>"]; 
 raw_end_timestamp [label="<duration>"]; 
 raw_data [shape="note", label="SEGMENTED,\nENCRYPTED DATA\ntime-location record\n(JSON)"];
 
-physical_activity -- sliced;
-sliced -- bout -- <<sequence_index>> -- <<activity_class>>; 
-<<activity_class>> -- activity_start_timestamp -- activity_end_timestamp -- sliced_data;
-activity_start_timestamp [label="<start_timestamp>"];
-activity_end_timestamp [label="<duration>"];
-sliced_data [shape="note", label="SEGMENTED,\nENCRYPTED DATA\nactivity record\n(JSON)"];
+raw_end_timestamp -- annotation;
+annotation [label="annotation\n(e.g., by DPU)"];
+annotation -- bout -- <<sequence_index>> -- <<activity_class>>; 
+<<activity_class>> -- annotation_data;
+annotation_data [shape="note", label="SEGMENTED,\nENCRYPTED DATA\nactivity record\n(JSON)"];
 
-sliced -- period -- sliced_start_timestamp -- sliced__end_timestamp -- sliced_time_lookup; 
-sliced_start_timestamp [label="<start_timestamp>"];
-sliced__end_timestamp [label="<duration>"];
-sliced_time_lookup [shape=note, label="LINK\nsliced/\n<sequence_index>"]
+annotation -- period -- annotation_start_timestamp -- annotation__end_timestamp -- annotation_time_lookup; 
+annotation_start_timestamp [label="<start_timestamp>"];
+annotation__end_timestamp [label="<duration>"];
+annotation_time_lookup [shape=note, label="LINK\nannotation/\n<sequence_index>"]
 
 }
 
