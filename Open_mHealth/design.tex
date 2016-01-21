@@ -154,7 +154,7 @@ The NDNFit user interacts with at least four pieces:
 \subsubsection{Ohmage-NDN Mobile Activity Capture}
 
 \paragraph{Responsible team members}
-Anyang University.
+Anyang University. UCLA IRL.
 
 \paragraph{Function}
 Capture location and activity information, publish. 
@@ -166,6 +166,16 @@ Initially, we will only support Android. Port NFD, tools. Provide NDN-CCL and NF
 Mobile capture application is one of two primary user interfaces.  
 
 Initial analysis of Ohmage mobile client communication completed by Prof. Euihyun Jung’s group from Anyang Univ.   
+
+Based on the previous analysis, Prof. Euihyun Jung’s group and UCLA IRL have built a running NDNFit Android data capture application. This application captures time-location data and produce Data and temporarily stored these Data locally; when there is network connection, the NDNFit application will automatically upload Data to the DSU and delete the local copy. Figure~\ref{fig:NDNFit-UI} shows the UI of NDNFit data capture application. To use it, users only need to click ``Start Tracking’’ and ``Stop Tracking’’, all the other steps will be completed automatically by the application.
+
+\begin{figure}
+\begin{center}
+\includegraphics[width=0.4\textwidth]{figures/NDNFit.png}
+\caption{NDNFit Application UI}
+\label{fig:NDNFit-UI}
+\end{center}
+\end{figure}
 
 From Basel: Today, we had an internal presentation from the Psychology Dept which explained their use of the Ohmage system that is running in Basel. Although NDNFit comes too late for being applied in ongoing projects, these projects are a good source of insights about user requirements for our future NDNFit system, especially the aspect of data sovereignty.
 
