@@ -540,12 +540,25 @@ necessary.
 
 %%%%%%%%%%%%%%
   
-\subsection{Routing \& Forwarding}
+\subsection{Routing \& Forwarding: Use ``LINK object'' to help route}
 
 \paragraph{Responsible team members}
 UCLA IRL
 
 Mobile publishing support. NDNS?
+
+Using provider-independent namespace leads to the problem that packets cannot be routed and forwarded correctly by the NDN routing system. 
+
+To solve this problem, we need to apply a mechanism called \verb|link|\cite{alex:snamp}. By creating a \verb|link|, data producers or data cache servers can map the provider-independent name prefixes to one or more routable prefixes of their ISPs (for example, map \verb|/org /openmhealth /haitao| to \verb|/edu /ucla /cs /irl|). Then they save the \verb|link| to the NDNS\cite{afanasyev2013addressing}. After looking up \verb|links| from NDNS, consumers put these \verb|links| into their \verb|Interest| packts; then NDN routing system use the mapping information provided by \verb|links| to route the packets to the right destination.
+Notice that in mobile case, data producers need to update and put their \verb|links| into NDNS in time so that data consumers are able to get the current efficient ones.
+
+Two different kinds of \verb|links| should be used in NDNFit.
+\subsubsection{Public Link}
+The public \verb|link| is the same as the original \verb|link|. We call it public because every consumer can get access to and use this kind of \verb|link|. Every components except for mobile devices will create public \verb|links| and put them into NDNS.
+\subsubsection{Private Link}
+The private \verb|link| is created by mobile devices and used by DSUs to fetch data form them. The reason to make them private is that mobile devices are always power limited, leading to the result that they cannot work stably as data servers. The better choice is, after mobile devices capture data, DSUs fetch data from them as soon as possible and work as providers for these data. Thus, mobile devices only need to provide data to DSUs. So mobile devices need to create private \verb|links| that only can be seen by DSUs. 
+
+We design two ways to make a \verb|link| private. The first is that the mobile device encrypts it and puts it into NDNS, but only gives some DSUs the decryption key (this is achieved by data-centric access control). The second  is the mobile device sends \verb|Interest| to DSUs to notify them to fetch \verb|link| (it's also encrypted) when needed.
 
 \begin{figure}
 \centering
