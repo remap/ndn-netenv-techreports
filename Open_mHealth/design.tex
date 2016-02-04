@@ -401,6 +401,61 @@ practical experimentation or do we need a directory-of-symmetric-keys or
 some other approach?  If not ABE, where should we begin for our approach?
 Are there existing best practices?
 
+In NDNFit, it's users who should own and control all their data. But users only possess mobile devices. So a proper design should guarantee users can use mobile devices to sign data correctly so that consumers can validate data, and to encrypt data flexibly so that only specified consumers can get access to the data. That's why trust relationship and access control are extremely important in NDNFit.
+
+We will talk about trust relationship management and data-centric access control mechanism in this section.
+
+\subsubsection{Schematized Trust\cite{yingdi:schematizing}}
+In NDN, the trust relationship is used for data signing and signature validation, which are reverse process of each other. Data packets are signed by some identity using its \verb|data signing key|, and its \verb|data signing key| is further signed by another identity using its \verb|key signing key|. This \verb|key signing key| is further signed by another identity using its \verb|key signing key|... This process ends when a authorized trust anchor is reached. To make this process reliable, the data signing and signature validation must follow some strict trust rule. 
+
+\begin{figure}
+	\centering
+	\includegraphics[width=0.47\textwidth]{./figures/trustrelationship3.png}
+	\caption{Trust Relationship for Capture Application}
+	\label{fig:trustrelationship}
+\end{figure}
+
+Figure \ref{fig:trustrelationship} shows the trust relationship for signing raw data and raw data signature validation. A user's data should be signed by the NDNFit application running on his/her mobile device, which is further signed by this mobile device, and further signed by his/her user ID, and finally signed by the NDNFit trust root.
+
+This trust relationship works for all users, but it's complicated for users to configure the similar trust relationship individually. So NDNFit itself can adopt schematized trust mechanism to configure a single rule for all the users using human-readable config files. The same solution will work for the default trust relationship of DSUs, DPUs and DVUs.
+
+A more complicated case is that DPUs and DVUs will process users' raw data and produce data that should belong to the users, and these data should be put back to users' DSUs. In this case, users can sign DPUs'/DVUs' data signing keys to add them into their trust relationship, authorizing DPUs/DVUs to sign data under users' namespace. This trust relationship can be much more easily expressed by using schematized trust.
+
+\subsubsection{Name-Based Access Control\cite{yingdi:nbac}}\label{nbac}
+In NDN, once producers send their data out, any host who caches the data can respond future data requests, which means that data are not controlled by users any more. Some mechanism is needed to prevent this problem, protecting data's security. 
+
+IP architecture suffers from similar problems. When data are in transferring, attackers can sniffer, copy and save all the data packets; after data are uploaded and saved in servers, attackers can hijack servers to get data. IP architecture proposed Transport Layer Security (TLS) protocols \cite{dierks2008transport} to secure the connection between two hosts, and OAuth or OpenID\cite{recordon2006openid} protocol to ensure that storage servers only send data to authorized users. But there are still problems: once data are uploaded and to servers, producers can only rely on servers to protect the data's security; when servers are compromised, all the data on this server are compromised. 
+
+Actually, all the security mechanisms applied in IP architecture can also be applied in NDN. But as we explained, these mechanisms do not work well. Fortunately, NDN provides a better solution to these problems -- data-centric access control mechanism, allowing producers to fully control their data as well as providing fine-grained access control.
+
+A data centric access control mechanism called name-based access control is proposed by NDN team. Figure \ref{fig:nbac} shows the basic idea of name-based access control. In name-based access control, data are divided into some minimum access units. For example, the data of the same type and the same hour belong to the same unit. For each minimum access unit, a symmetric encryption key is generated and used by the data producer to encrypt all the data falling into this unit. There are also different levels of access control groups, each covers a different access scope -- a different subset of all the minimum access units. Every access control group has a group manager, whose signing key pair is signed by the data producer. The group manager is responsible for generating and updating group asymmetric encryption and decryption key pair, and using encryption keys to encrypt symmetric encryption keys of minimum access units covered by the group's access scope.
+
+\begin{figure}
+	\centering
+	\includegraphics[width=0.3\textwidth]{./figures/nbac2.png}
+	\caption{Name-based Access Control Mechanism}
+	\label{fig:nbac}
+\end{figure}
+
+If a consumer wants to get access to some parts of a producers' data, the consumer should first tell the producer what data it wants, then the producer will join it into a proper existing group or create a new group for this consumer. To join a consumer into a group, the producer needs to use the consumer's public signing key to encrypt the group's decryption keys. 
+
+After a consumer is authorized to get access to some data, it should follow these steps to fetch data. First, it fetches the encrypted group decryption keys and use its own private signing key to decrypt them. Second, it uses these decryption keys to decrypt the symmetric encryption keys for the corresponding minimum access units. Lastly, it uses these symmetric encryption keys to decrypt the corresponding original data.
+
+Here we describe how name-based access control is used in NDNFit. 
+
+1. Every access control group can be represented by a name prefix \verb|/<prefix> /<group> /<starthour - endhour>|, all the asymmetric key pairs belonging to this group should be named after this prefix. \verb|/org /openmhealth /haitao| \\ \verb|/fitness /walking /group /10 - 11| means that this is an access control group which has the scope for everyday walking data from 10am to 11am.
+
+2. In NDNFit, a user should control all its data, so instead of delegating group management authority to other identities, the user's identity (e.g. \verb|/org /openmhealth /haitao|) is the manager for all the access control group. 
+
+3. The name of an encryption key belonging to an access control group is of the format \verb|/<prefix> /<group> /<starthour| \\ \verb|- endhour> /<timestamp> /encryption /<validation time>|. This key is encrypted by the producer's public signing key and can only be decrypted by the producer itself, so that the producer can store it in DSUs without worrying about leaking it to others. 
+Similarly, the name of an decryption key for an access control group is of the format \verb|/<prefix> /<group>| \\ \verb|/<starthour - endhour> /<timestamp> /decryption| \\ \verb|/<validation time>|. It's also encrypted for the same reason. 
+What's more, the decryption key is also encrypted for consumers who have read access, the name is of the format \verb|/<prefix> /<group> /<starthour - endhour> /<timestamp>| \\ \verb|/decryption /<validation time> /<consumer-prefix>|, and it's encrypted using the consumer's public signing key, enabling that only the exact consumer can decrypt it using its private signing key. An example is \verb|/org /openmhealth /haitao| \\ \verb|/fitness /walking /group /10 - 11 /20151020113023| \\  \verb|/decryption /2015102011 - 2015111218 /org /openmhealth|\\ \verb|/alice|, this is a decryption key for the user \verb|alice|.
+
+4. The data of the same type and the same hour belong to the same minimum access unit, and the name of its symmetric encryption key is of the format \verb|/org /openmhealth /<user ID> /<data type 1> /<data type 2>| \\ \verb|/<data type 3> /encryption /<hourpoint>|.  This key is encrypted by the producer's public signing key so that it can be stored in DSUs for future use. The key is also encrypted for different access control group, and the names are of format \verb|/org /openmhealth /<user ID> /<data type 1> /<data| \verb|type 2> /<data type 3> /encryption /<hourpoint>| \\ \verb|/<prefix> /<group> /<starthour - endhour>|. For example, \verb|/org /openmhealth /haitao /fitness /walking /raw| \\ \verb|/encryption /2015102010 /org /openmhealth /haitao| \\ \verb|/fitness /walking /group /10 - 11|.
+
+By adopting name-based access control mechanism, users can easily use mobile devices to generate all the mentioned keys. These keys can be stored in DSUs just like ordinary data, since only consumers who has right keys can decrypt these keys. 
+Consumers should follow steps described before to get access to a producer's data.
+
 \subsubsection{Identity}
 
 Users may have different identities per service (or at least per flow). 
