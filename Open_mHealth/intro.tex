@@ -123,7 +123,10 @@ network environment to both drive and evaluate NDN.
 
 \begin{itemize}
 \item Locating endpoints to source/sink data.
-\item Key pain point is OAuth 2.0:  Implementation relies on this – doesn’t scale to the DPU model and has numerous problems.  Quickly identified by 
+\item Key pain point is OAuth 2.0:  Implementation relies on this – doesn’t scale to the DPU model and has numerous problems. 
+
+When data are in transferring in the IP network, attackers can sniffer, copy and save all the data packets; after data are uploaded and saved in servers, attackers can hijack servers to get data. IP architecture proposed Transport Layer Security (TLS) protocols \cite{dierks2008transport} to secure the connection between two hosts, and OAuth or OpenID\cite{recordon2006openid} protocol to ensure that storage servers only send data to authorized users. But there are still problems: once data are uploaded and to servers, producers can only rely on servers to protect the data's security; when servers are compromised, all the data on this server are compromised. 
+
 \item [Others...] 
 \end{itemize}
 

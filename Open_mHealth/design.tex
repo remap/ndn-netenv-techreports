@@ -1,4 +1,4 @@
-\section{Design of NDNFit}
+\section{Design Requirements}
 
 Fundamentally, NDNFit should follow the Open mHealth paradigm, but adapting its REST-based communication model to a data dissemination approach using NDN. The application must be constructed from an ecosystem with each type of component envisioned by the Open mHealth team, including
 1) data capture, 2) secure storage, 3) modeling and analytics, and 4) user
@@ -165,17 +165,7 @@ Initially, we will only support Android. Port NFD, tools. Provide NDN-CCL and NF
 
 Mobile capture application is one of two primary user interfaces.  
 
-Initial analysis of Ohmage mobile client communication completed by Prof. Euihyun Jung’s group from Anyang Univ.   
-
-Based on the previous analysis, Prof. Euihyun Jung’s group and UCLA IRL have built a running NDNFit Android data capture application. This application captures time-location data and produce Data and temporarily stored these Data locally; when there is network connection, the NDNFit application will automatically upload Data to the DSU and delete the local copy. Figure~\ref{fig:NDNFit-UI} shows the UI of NDNFit data capture application. To use it, users only need to click ``Start Tracking’’ and ``Stop Tracking’’, all the other steps will be completed automatically by the application.
-
-\begin{figure}
-\begin{center}
-\includegraphics[width=0.4\textwidth]{figures/NDNFit.png}
-\caption{NDNFit Application UI}
-\label{fig:NDNFit-UI}
-\end{center}
-\end{figure}
+Initial analysis of Ohmage mobile client communication completed by Prof. Euihyun Jung's group from Anyang Univ. 
 
 From Basel: Today, we had an internal presentation from the Psychology Dept which explained their use of the Ohmage system that is running in Basel. Although NDNFit comes too late for being applied in ongoing projects, these projects are a good source of insights about user requirements for our future NDNFit system, especially the aspect of data sovereignty.
 
@@ -304,6 +294,7 @@ UCLA IRL (Yingdi)? and REMAP (Dustin)?
   
 %%%%%%%%%%%%%%%%%%%
   
+  \section{Design of NDNFit} 
 \subsection{Naming}
 
 \paragraph{Responsible team members}
@@ -311,7 +302,7 @@ UCLA REMAP, UCLA IRL
 
 
 \subsubsection{Data}
-Personal health data (and metadata) namespace and repository design – focusing on support for physical activity data in the first round.  
+Personal health data (and metadata) namespace and repository design is focusing on support for physical activity data in the first round.  
 What schema? 
 
 \textbf{Basis of design}: Open mHealth Physical Activity data schema\footnote{\url{http://www.openmhealth.org/developers/schemas/#physical-activity} and \url{http://bioportal.bioontology.org/ontologies/SNOMEDCT?p=classes&conceptid=68130003}}, as well as other schemas from Open mHealth as needed. 
@@ -323,7 +314,7 @@ The proposed data namespace is shown in Figure~\ref{fig:NDNFit-namespace}. Its c
 \begin{itemize}
 \item Trust anchor
 
-The root \url{/org/openmhealth} is the trust anchor of NDNFit, users get identities and certificates from the trust anchor. 
+The root \url{/org/openmhealth} is the trust anchor of NDNFit, users, DSUs, DPUs get identities and certificates from the trust anchor. 
 
 \item DPU and DVU
 
@@ -331,7 +322,7 @@ NDNFit-provided DPU and DVU have identities of the format \url{/org/openmhealth/
 
 \item User's data
 
-Each user has an identity \url{/org/openmhealth/<user-id>}. Users get identities and certificates from the trust anchor.
+Each user has an service-independent identity \url{/org/openmhealth/<user-id>}. All the user's data are named after this prefix. This prefix may not be necessarily routable, though it	could be. Users get identities and certificates from the trust anchor.
 
 A user can possess multiple mobile devices, to differentiate them, the user can further assign identity \url{/org/openmhealth/<user-id>/<device-id>} and issue certificate to each of them.
 
@@ -346,8 +337,8 @@ A user can possess multiple mobile devices, to differentiate them, the user can 
 	
 	Name-based access control is used here. Take captured data as an example to illustrate how it works here in NDNFit.
 	
-	Every hour, a new C-KEY (symmetric key) is generated and used to encrypt all the captured data in this hour. The C-KEY is encrypted by the E-KEY of each access group who has access to the corresponding captured data, and is named \url{/<prefix>/C-KEY/<start_timestamp_hour>/<end_timestamp_hour>/<E-KEY name>}. The \url{start_timestamp_hour} and \url{end_timestamp_hour} are the start and end hour points when the C-KEY is valid. For each access group, the E-KEY and D-KEY (asymmetric key pair) are also generated periodically (the period is not fixed to 1 hour). The E-KEY is named
-	\url{/<prefix>/E-KEY/<start_timestamp_hour>/<end_timestamp_hour>/}; and the D-KEY is encrypted for each member (data consumer) of this access group and named \url{/<prefix>/D-KEY/<start_timestamp_hour>/<end_timestamp_hour>/for/<consumer-id>}. Notice that in this case, all the C-KEYs, E-KEYs and D-KEYs are generated by the user.
+	Every hour, a new C-KEY (symmetric content encryption key) is generated and used to encrypt all the captured data in this hour. The C-KEY is encrypted by the E-KEY of each access group who has access to the corresponding captured data, and is named \url{/<prefix>/C-KEY/<start_timestamp_hour>/<end_timestamp_hour>/FOR/<E-KEY name>}. The \url{start_timestamp_hour} and \url{end_timestamp_hour} are the start and end hour points when the C-KEY is valid. For each access group, the E-KEY and D-KEY (asymmetric key pair) are also generated periodically (the period is not fixed to 1 hour). The E-KEY is named
+	\url{/<prefix>/E-KEY/<start_timestamp_hour>/<end_timestamp_hour>/}; and the D-KEY is encrypted for each member (data consumer) of this access group and named \url{/<prefix>/D-KEY/<start_timestamp_hour>/<end_timestamp_hour>/FOR/<consumer-public-key-name>}. Notice that in this case, all the C-KEYs, E-KEYs and D-KEYs are generated by the user.
 	
 	For the DPU-processed data (the bout branch), it's a little complicated. In this case, the C-KEY should be generated by the DPU, and then it should be sent back to the user (the C-KEY should be encrypted only for the user) to be encrypted by some access groups? E-KEYs. All the other steps are the same as the previous.
 	
@@ -366,16 +357,11 @@ Some users can form groups. Groups have identities of the format \url{/org/openm
 
 \begin{figure}
 \begin{center}
-\includegraphics[width=0.65\textwidth]{figures/NDNFit-name-top-02.png}
+\includegraphics[width=1.0\textwidth]{figures/NDNFit-name-top-02.png}
 \caption{NDNFit Namespace, version 2.}
 \label{fig:NDNFit-namespace}
 \end{center}
 \end{figure}
-
-\subsubsection{Certificates}
-
-\subsubsection{Processing}
-Borrow ideas from Named Function Networking concept for distributed processing
 
 %%%%%%%%%%%%%%
   
@@ -396,12 +382,9 @@ information except by the choice of the user.
 One entity (here, the `` user") maintains multiple publishers whose data are
 consumed by many services with varying levels of access based on the: type
 of data (as expressed in the name), level of granularity, and date/time
-when the data was produced. ABE seems a good fit here, is it viable for
-practical experimentation or do we need a directory-of-symmetric-keys or
-some other approach?  If not ABE, where should we begin for our approach?
-Are there existing best practices?
+when the data was produced. 
 
-In NDNFit, it's users who should own and control all their data. But users only possess mobile devices. So a proper design should guarantee users can use mobile devices to sign data correctly so that consumers can validate data, and to encrypt data flexibly so that only specified consumers can get access to the data. That's why trust relationship and access control are extremely important in NDNFit.
+However, users only possess mobile devices. So a proper design should guarantee users can use mobile devices to sign data correctly so that consumers can validate data, and to encrypt data flexibly so that only specified consumers can get access to the data. That's why trust relationship and access control are extremely important in NDNFit.
 
 We will talk about trust relationship management and data-centric access control mechanism in this section.
 
@@ -410,25 +393,23 @@ In NDN, the trust relationship is used for data signing and signature validation
 
 \begin{figure}
 	\centering
-	\includegraphics[width=0.47\textwidth]{./figures/trustrelationship3.png}
+	\includegraphics[width=0.7\textwidth]{./figures/trustrelationship3.png}
 	\caption{Trust Relationship for Capture Application}
 	\label{fig:trustrelationship}
 \end{figure}
 
-Figure \ref{fig:trustrelationship} shows the trust relationship for signing raw data and raw data signature validation. A user's data should be signed by the NDNFit application running on his/her mobile device, which is further signed by this mobile device, and further signed by his/her user ID, and finally signed by the NDNFit trust root.
+Figure \ref{fig:trustrelationship} shows the trust relationship for signing originally captured data and validating these data's signature. A user's data should be signed by the NDNFit application running on his/her mobile device, which is further signed by this mobile device, and further signed by his/her user ID, and finally signed by the NDNFit trust root.
 
 This trust relationship works for all users, but it's complicated for users to configure the similar trust relationship individually. So NDNFit itself can adopt schematized trust mechanism to configure a single rule for all the users using human-readable config files. The same solution will work for the default trust relationship of DSUs, DPUs and DVUs.
 
 A more complicated case is that DPUs and DVUs will process users' raw data and produce data that should belong to the users, and these data should be put back to users' DSUs. In this case, users can sign DPUs'/DVUs' data signing keys to add them into their trust relationship, authorizing DPUs/DVUs to sign data under users' namespace. This trust relationship can be much more easily expressed by using schematized trust.
 
-\subsubsection{Name-Based Access Control\cite{yingdi:nbac}}\label{nbac}
-In NDN, once producers send their data out, any host who caches the data can respond future data requests, which means that data are not controlled by users any more. Some mechanism is needed to prevent this problem, protecting data's security. 
 
-IP architecture suffers from similar problems. When data are in transferring, attackers can sniffer, copy and save all the data packets; after data are uploaded and saved in servers, attackers can hijack servers to get data. IP architecture proposed Transport Layer Security (TLS) protocols \cite{dierks2008transport} to secure the connection between two hosts, and OAuth or OpenID\cite{recordon2006openid} protocol to ensure that storage servers only send data to authorized users. But there are still problems: once data are uploaded and to servers, producers can only rely on servers to protect the data's security; when servers are compromised, all the data on this server are compromised. 
+SHOW THE EXAMPLE AFTER WE REACH AGREEMENT
 
-Actually, all the security mechanisms applied in IP architecture can also be applied in NDN. But as we explained, these mechanisms do not work well. Fortunately, NDN provides a better solution to these problems -- data-centric access control mechanism, allowing producers to fully control their data as well as providing fine-grained access control.
+\subsubsection{Name-Based Access Control\cite{yingdi:nbac}}\label{nbac} 
 
-A data centric access control mechanism called name-based access control is proposed by NDN team. Figure \ref{fig:nbac} shows the basic idea of name-based access control. In name-based access control, data are divided into some minimum access units. For example, the data of the same type and the same hour belong to the same unit. For each minimum access unit, a symmetric encryption key is generated and used by the data producer to encrypt all the data falling into this unit. There are also different levels of access control groups, each covers a different access scope -- a different subset of all the minimum access units. Every access control group has a group manager, whose signing key pair is signed by the data producer. The group manager is responsible for generating and updating group asymmetric encryption and decryption key pair, and using encryption keys to encrypt symmetric encryption keys of minimum access units covered by the group's access scope.
+NDN team proposes a data-centric access control mechanism -- name-based access control, which enabls producers to fully control their data in fine granulariy. Figure \ref{fig:nbac} shows the basic idea of name-based access control. In name-based access control, data are divided into some minimum access units. For example, the data of the same type and the same hour belong to the same access unit. For each minimum access unit, a symmetric encryption key is generated and used by the data producer to encrypt all the data falling into this unit. There are also different levels of access control groups, each covers a different access scope -- a different subset of all the minimum access units. Every access control group has a group manager (multiple groups can have the same group manager), whose signing key pair is signed by the data producer. The group manager is responsible for generating and updating group asymmetric encryption and decryption key pair, and using encryption keys to encrypt symmetric encryption keys of minimum access units covered by the group's access scope.
 
 \begin{figure}
 	\centering
@@ -439,22 +420,25 @@ A data centric access control mechanism called name-based access control is prop
 
 If a consumer wants to get access to some parts of a producers' data, the consumer should first tell the producer what data it wants, then the producer will join it into a proper existing group or create a new group for this consumer. To join a consumer into a group, the producer needs to use the consumer's public signing key to encrypt the group's decryption keys. 
 
-After a consumer is authorized to get access to some data, it should follow these steps to fetch data. First, it fetches the encrypted group decryption keys and use its own private signing key to decrypt them. Second, it uses these decryption keys to decrypt the symmetric encryption keys for the corresponding minimum access units. Lastly, it uses these symmetric encryption keys to decrypt the corresponding original data.
+After a consumer is authorized to get access to some data, it should follow the following steps to decrypt data. First, it fetches the encrypted group decryption keys and use its own private signing key to decrypt them. Second, it uses these decryption keys to decrypt the symmetric encryption keys for the corresponding minimum access units. Lastly, it uses these symmetric encryption keys to decrypt the corresponding original data.
 
 Here we describe how name-based access control is used in NDNFit. 
 
-1. Every access control group can be represented by a name prefix \verb|/<prefix> /<group> /<starthour - endhour>|, all the asymmetric key pairs belonging to this group should be named after this prefix. \verb|/org /openmhealth /haitao| \\ \verb|/fitness /walking /group /10 - 11| means that this is an access control group which has the scope for everyday walking data from 10am to 11am.
+1. Every access control group can be represented by a name prefix \url{/<user-prefix>/read/<data-prefix>}, all the asymmetric key pairs belonging to this group should be named after this prefix. \url{/org/openmhealth/haitao/read/physical_activity/time_location} means that this is an access control group which has the scope of everyday haitao's time\_location data.
 
-2. In NDNFit, a user should control all its data, so instead of delegating group management authority to other identities, the user's identity (e.g. \verb|/org /openmhealth /haitao|) is the manager for all the access control group. 
+2. In NDNFit, a user should control all its data, so instead of delegating group management authority to other identities, the user's identity (e.g. \url{/org/openmhealth/haitao}) is the manager of all the access control group. 
 
-3. The name of an encryption key belonging to an access control group is of the format \verb|/<prefix> /<group> /<starthour| \\ \verb|- endhour> /<timestamp> /encryption /<validation time>|. This key is encrypted by the producer's public signing key and can only be decrypted by the producer itself, so that the producer can store it in DSUs without worrying about leaking it to others. 
-Similarly, the name of an decryption key for an access control group is of the format \verb|/<prefix> /<group>| \\ \verb|/<starthour - endhour> /<timestamp> /decryption| \\ \verb|/<validation time>|. It's also encrypted for the same reason. 
-What's more, the decryption key is also encrypted for consumers who have read access, the name is of the format \verb|/<prefix> /<group> /<starthour - endhour> /<timestamp>| \\ \verb|/decryption /<validation time> /<consumer-prefix>|, and it's encrypted using the consumer's public signing key, enabling that only the exact consumer can decrypt it using its private signing key. An example is \verb|/org /openmhealth /haitao| \\ \verb|/fitness /walking /group /10 - 11 /20151020113023| \\  \verb|/decryption /2015102011 - 2015111218 /org /openmhealth|\\ \verb|/alice|, this is a decryption key for the user \verb|alice|.
+3. An access control group is represented by a prefix of the format \url{/org/openmhealth/<user-id>/read/<mutiple data types>} The name of an encryption key belonging to an access control group is of the format \url{/<access-control-group-prefix>/E-KEY/<start_timestamp>/<end-timestamp>}. This key is not encrypted, so anyone can get access to it. 
+Similarly, the name of an decryption key for an access control group is of the format \url{/<access-control-group-prefix>/D-KEY/<start_timestamp>/<end-timestamp>}. The decryption key is encrypted for consumers who have read access using the consumer's public signing key, so that only the exact consumer can decrypt it using its private signing key, the name is of the encrypted decryption key is of the format \url{/<access-control-group-prefix>/D-KEY/<start_timestamp>/<end-timestamp>/FOR/<consumer's public key name>}. An example is \url{/org/openmhealth/haitao/read/physical_activity/time_location/D-KEY/20151020113000/20151020123000/FOR/org/openmhealth/alice/E-KEY}, this is a decryption key for the user \url{alice}.
 
-4. The data of the same type and the same hour belong to the same minimum access unit, and the name of its symmetric encryption key is of the format \verb|/org /openmhealth /<user ID> /<data type 1> /<data type 2>| \\ \verb|/<data type 3> /encryption /<hourpoint>|.  This key is encrypted by the producer's public signing key so that it can be stored in DSUs for future use. The key is also encrypted for different access control group, and the names are of format \verb|/org /openmhealth /<user ID> /<data type 1> /<data| \verb|type 2> /<data type 3> /encryption /<hourpoint>| \\ \verb|/<prefix> /<group> /<starthour - endhour>|. For example, \verb|/org /openmhealth /haitao /fitness /walking /raw| \\ \verb|/encryption /2015102010 /org /openmhealth /haitao| \\ \verb|/fitness /walking /group /10 - 11|.
+4. The data of the same type and the same hour belong to the same minimum access unit, and the name of its symmetric encryption key is of the format \url{/org/openmhealth/<user ID>/<data type 1>/<data type 2>/<data type 3>/C-KEY/<hourpoint>}. This key is encrypted for different access control group, and the names are of format \url{/org/openmhealth/<user ID>/<data type 1>/<data type 2> /<data type 3>/C-KEY/<hourpoint>/FOR/<access-control-group-prefix>}. For example, \url{/org/openmhealth/haitao/data/physical_activity/time_location/C-KEY/2015102010/FOR/org/openmhealth/haitao/read/physical_activity}.
 
 By adopting name-based access control mechanism, users can easily use mobile devices to generate all the mentioned keys. These keys can be stored in DSUs just like ordinary data, since only consumers who has right keys can decrypt these keys. 
 Consumers should follow steps described before to get access to a producer's data.
+
+\subsubsection{Request and Grant Read \& Write Access}
+
+FILL THIS PART AFTER WE REACH AGREEMENT
 
 \subsubsection{Identity}
 
@@ -522,6 +506,21 @@ data flow architectures?
 
 %%%%%%%%%%%%%%
 
+
+\subsection{Capture}
+Based on the previous analysis, Prof. Euihyun Jung's group and UCLA IRL have built a running NDNFit Android data capture application. 
+
+This application captures time-location data,  produces Data and temporarily stored these Data locally. When the mobile device (re)connects network, the NDNFit Android application will automatically send the choosed DSU its current routable prefix using LINK and notify the DSU that it is online. On receiving notification, the DSU will fectch data from the NDNFit Android application using the data fetching protocols we decribe above. After confirming that the DSU have successfully fetched all the data, the NDNFit Android application will delete local stored data.
+
+ Figure~\ref{fig:NDNFit-UI} shows the UI of NDNFit data capture application. To use it, users only need to click ``Start Tracking'' and ``Stop Tracking'', all the other steps will be completed automatically by the application.
+
+\begin{figure}
+	\begin{center}
+		\includegraphics[width=0.4\textwidth]{figures/NDNFit.png}
+		\caption{NDNFit Application UI}
+		\label{fig:NDNFit-UI}
+	\end{center}
+\end{figure}
 %%%%%%%%%%%%%%
   
 \subsection{Storage}
@@ -538,7 +537,13 @@ Need to provide write access control
 A mechanism for delegating authority to publish into a repository is
 necessary. 
 
+
 %%%%%%%%%%%%%%
+
+\subsection{Processing}
+Borrow ideas from Named Function Networking concept for distributed processing
+
+%%%%%%%%%%%%%%%
   
 \subsection{Routing \& Forwarding: Use ``LINK object'' to help route}
 
@@ -572,4 +577,60 @@ We design two ways to make a \verb|link| private. The first is that the mobile d
 \label{fig:mobilepublisher}
 \end{figure}
 
+\subsection{Data Transmission Protocols}
+In NDNFit, DSUs work as the center of data flow. There should be three different data  transmission cases in NDNFit. (1) DSUs fetch data from other components,  (2) other components fetch data from DSUs, and (3) data sync between DSUs. We use DSUs fetch data from mobile devices and DPUs fetch data from DSUs as examples to illustrate the first two. 
+
+\subsubsection{DSUs Fetch  Data from Mobile Devices}\label{synctoDSU}
+There are three problems need to be solved. (a) Mobile device are not always online, so DSUs should know when to fetch data. (b) Mobile capture data are named with a random timestamp component, DSUs should know the exact names before fetching data. (c) Mobile devices have limited resource such as storage and power, so they should know when to delete locally stored data.
+
+To solve the first problem, a mobile device needs to send signal \verb|Interest| to a DSU whenever it reconnects the Internet, then the DSU can start to fetch data from the mobile device. When the DSU cannot get response from the mobile device for more than a certain time limit, such as 10 minutes, it should treat the mobile device as off-line.
+
+We introduce one level of direction - catalog - used by DSUs to learn the names of captured data from mobile devices. A mobile device packages captured data names into a catalog every 10 minutes. That is to say, a catalog contains the names of data captured in the past 10 minutes. The first figure in Figure \ref{fig:catalog} shows the packet format of catalogs. The names for catalogs should follow the format \verb|/org/openmhealth/<user ID>/data/physical_actirvity/time_location/catalog/<timestamp>|. Following the naming convention of catalogs, DSUs can construct catalog names and fetch catalog back.
+
+To confirm that a DSU have fetched all the data whose names are packaged in the same catalog, a mobile device sends a confirmation request \verb|Interest| right after it sends out the catalog. After the DSU gets all these data, it will send confirmation \verb|Data| back to the mobile device. Once the mobile device receives the confirmation, it can delete the corresponding local stored data.
+The names of confirmations should follow the format \verb|/<DSU prefix>/confirm/<catalog name>|.
+
+After receiving signal \verb|Interest| from a mobile device, a DSU sends \verb|Interest|s to fetch catalog starting from the last non-responded timepoint, get responses and unpack the captured data names; shortly, the DSU receives \verb|Interest|s for confirmations from the mobile device. Then the DSU sends \verb|Interest|s for captured data and fetches data back. When successfully fetching all the data whose names are packed in a same catalog, the DSU responds the mobile device's \verb|Interest| for confirmation to this catalog.
+
+\begin{figure}
+	\centering
+	\includegraphics[width=0.7\textwidth]{./figures/catalog.png}
+	\caption{The Manifest and Update Info Packets}
+	\label{fig:catalog}
+\end{figure}
+
+\subsubsection{DPUs Fetch Data from DSUs}\label{syncfromDSU}
+The catalog  mechanism explained in section \ref{synctoDSU} is also introduced and used by DPUs to fetch the names of stored data from DSUs; while the confirmation mechanism is omitted since DSUs never delete data. 
+
+However, a new problem emerges. When a user has multiple mobile devices to capture data and some of them temporarily do not have network connection, the mobile devices which have network connection will put their data into DSUs first, triggering DSUs to generate catalogs; when the mobile devices which do not have network connection reconnect network and put the same type of data into DSUs, DSUs need to update some of the previous catalogs (whose timestamp covers the timestamp of the new data). Without updating catalogs, DPUs cannot get the latest data.
+
+To solve this problem, a new component ``version'' is added to the tail of catalogs names. Newly received ``out date'' data will trigger DSUs to generate new catalogs with higher visions. Table \ref{tbl:threedatanames} shows the name format of catalog. To get the latest versioned catalogs, DPUs should set the ``ChildSelector'' field of \verb|Interest| packets to be ``RightMostChild'' and ``MustBeFresh'' field of \verb|Interest| packets to be ``True''.
+
+However, the problem is not fully solved. DPUs which have not fetched the old versioned catalogs can set the ``ChildSelector'' and ``MustBeFresh'' to get the latest version. The ones which have fetched the old versioned catalogs and cached them, so they cannot get the latest version unless they never cache data. But cache mechanism can greatly improve system performance, so we still want to allow DPUs to cache data.
+
+That's why the update information mechanism, which is used for DPUs to fetch update information of catalogs, is introduced. The second  figure in Figure \ref{fig:catalog} shows the packet format of update information, and Table \ref{tbl:threedatanames} shows the name format of update information. The sequence number of update information starts from 1. Whenever some catalogs which have the same \verb|n-3| (\verb|n| is the number of components in the catalog) prefixes with the update information are updated, a new update information with a bigger sequence number, which packages all the updated catalogs' names and the corresponding latest versions together, will be generated.
+
+Combine catalog and update information mechanisms together, DPUs can always get the latest versioned catalogs, thus the latest data. To achieve that, DPUs first fetch the latest update information by sending an \verb|Interest| with  ``ChildSelector'' field  to be ``RightMostChild'' and  ``MustBeFresh'' field to be ``True''. Second, DPUs fetch all the latest versioned catalogs by sending \verb|Interest|s according to naming convention. Last, DPUs keep requesting the next sequenced update information; if get it, DPUs fetch the latest versioned catalogs whose names are packaged in this update information; then DPUs continue to keep requesting the next sequenced update information.
+
+\begin{table*}
+	\centering
+	\caption{Three Types of Names in Sync Protocols}
+	\renewcommand{\arraystretch}{1.5}
+	\begin{tabular}{|c|c|c|} \hline
+		Type & Name pattern & Example \\ \hline
+		Original data &
+		\parbox[c]{0.4\textwidth}{\url{/org/mhealth/<user-id>/<data-type1>/<data-type2>/<data-type3>/<timestamp>}}
+		& \parbox[c]{0.4\textwidth}{\url{/org/mhealth/haitao/data/physical_activity/time_location/20150702180347}}\\ \hline
+		Catalog & \parbox[c]{0.4\textwidth}{\url{/org/mhealth/<user-id>/<data-type1>/<data-type2>/<data-type3>/catalog/<timestamp>/<version>}}& \parbox[c]{0.4\textwidth}{\url{/org/mhealth/haitao/physical_activity/time_location/catalog/201507021800/2}}\\ \hline
+		Update Info & \parbox[c]{0.4\textwidth}{\url{/org/mhealth/<user-id>/<data-type1>/<data-type2>/<data-type3>/update_info/<sequence #>}}
+		& \parbox[c]{0.4\textwidth}{\url{/org/mhealth/haitao/physical_activity/time_location/update_info/73}}\\ \hline
+	\end{tabular}
+	\label{tbl:threedatanames}
+\end{table*}
+
+
+\subsubsection{Data Sync between DSUs}
+NDNFit allows a user to choose multiple DSUs to work as his/her DSUs, each of them keeps a same copy of all the user's data. This mechanism backups the user's data in case that a single DSU crushes or fails. Keeping the same copy of data means that DSUs need to sync database with each other.
+
+Existing repo sync protocol\cite{shireposync} fits this scenario well. Notice that only data fetched from other components are synchronized, catalogs and update information generated by DSUs should not be synchronized. That's because we want each DSU to generate the same catalogs and update information for itself instead of assigning a master DSU to do so, in the latter case the system still suffers from single node failure problem.
 
